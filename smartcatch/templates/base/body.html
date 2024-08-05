@@ -1,0 +1,41 @@
+{% extends 'home.html' %}
+{% block body %}
+<!--<body class="hold-transition sidebar-mini sidebar-collapse">-->
+<body class="sidebar-mini sidebar-collapse">
+<div class="wrapper">
+    <!-- Header -->
+    {% include 'base/header.html' %}
+    <!-- Content -->
+    <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) --> 
+    <section class="content-header">
+      <div class="container-fluid">
+        <!--<div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>{{ title }}</h1>
+          </div>
+        </div>-->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content-header -->
+  
+    
+
+    
+
+  <!-- contenido -->
+      {% block content %}
+
+      {% endblock %}
+  </div>
+  <!-- /.content-wrapper -->
+    <!-- Footer -->
+        {% include 'base/footer.html' %}
+  </div>
+    <!-- Block javascript -->
+    {% block javascript %}
+
+    {% endblock %}
+</body>
+{% endblock %}

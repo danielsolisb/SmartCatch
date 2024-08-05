@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Login to Techdevsa system monitoring</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+  
+</head>
+
+<section class="vh-100" style="background-color: #508bfc;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="card shadow-2-strong" style="border-radius: 1rem;">
+          <div class="card-body p-5 text-center">
+			
+			<form method="post" action="{% url 'login' %}">
+			{% csrf_token %}
+            <h3 class="mb-5">Login</h3>
+            <div class="form-outline mb-4">
+              <!--<input type="email" id="typeEmailX-2" class="form-control form-control-lg" />-->
+              <input type="text" class="form-control form-control-lg" id="typeEmailX-2" placeholder="Email" required="required" name="{{form.username.name}}" >
+			        <label class="form-label" for="typeEmailX-2">Email</label>
+            
+              <!--<input type="password" id="typePasswordX-2" class="form-control form-control-lg" />-->
+              <input type="password" id="typePasswordX-2" class="form-control form-control-lg" placeholder="Password" required="required" name="{{form.password.name}}">
+			        <label class="form-label" for="typePasswordX-2">Password</label>
+			      </div>
+            <!--<button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>-->
+			  <input class="btn btn-primary btn-lg btn-block" type="submit" value="Login" />
+			</form>
+      </div>
+          <div class="form-outline mb-4">
+              <center>Request your demo <a href="{%url 'Demo'%}">Here</a>.</center>
+              <center>Create an account <a href="{%url 'register'%}">Signup now</a>.</center>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
