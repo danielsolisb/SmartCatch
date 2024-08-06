@@ -14,7 +14,7 @@ urlpatterns = [
     path('report/', ReportView.as_view(), name='report'),
     path('alarms/',  AlarmListView.as_view(), name='alarms'),
     path('warnings/',  WarningListView.as_view(), name='warnings'),
-    #path('', include('django.contrib.auth.urls'), name="login"), #agregado para login
+    path('', include('django.contrib.auth.urls'), name="login"), #agregado para login
     path('logout/', include('django.contrib.auth.urls'), name="logout"), #agregado para login 
     path('edit-profile/', UserUpdateView.as_view(), name='edit_profile'),
 ]

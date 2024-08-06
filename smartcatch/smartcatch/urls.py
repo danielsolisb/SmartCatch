@@ -11,8 +11,7 @@ from CoreApps.MainPage.views import page_not_found404
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    #path("", include("CoreApps.MainPage.urls")),
-    path('/', include('django.contrib.auth.urls'), name="login"),
+    path("", include("CoreApps.MainPage.urls")),
     path("Portal/", include("CoreApps.Portal.urls")),
     path("Register", register, name="register" )    
 ]
