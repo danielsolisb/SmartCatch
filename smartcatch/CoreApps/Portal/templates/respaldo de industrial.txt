@@ -1,0 +1,3 @@
+<p>{{station_actuator}}</p>
+<p>{{actuators_names}}</p>
+<p>{{last_measurements}}</p>

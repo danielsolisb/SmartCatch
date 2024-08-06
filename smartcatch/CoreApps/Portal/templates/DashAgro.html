@@ -1,0 +1,155 @@
+{% extends 'base/body.html' %}
+{% load static %}
+{% block head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="{% static 'adminlte-3.1.0/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'adminlte-3.1.0/js/demo.js' %}"></script>
+    
+    
+
+    
+    
+
+
+{% endblock %}
+
+{% block content %}
+ <!-- Main content -->
+ 
+    <section class="content">
+            <div class="row">
+                <!-- ./col -->
+                <div class="col-lg-4 col-6">
+                  <!-- small box -->
+                  <div class="small-box bg-success">
+                    <div class="inner">
+                      <h3>{{station.count}}</h3>
+                      <p>Registered stations</p>
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-checkmark"></i>
+                    </div>
+                    <a href="{%url 'Dashboard'%}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-4 col-6">
+                  <!-- small box -->
+                  <div class="small-box bg-warning">
+                    <div class="inner">
+                      <h3>{{user_warnings.count}}</h3>
+                      <p>Warnings</p>
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-android-alert"></i>
+                    </div>
+                    <a href="{%url 'warnings'%}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-4 col-6">
+                  <!-- small box -->
+                  <div class="small-box bg-danger">
+                    <div class="inner">
+                      <h3>{{user_alarms.count }}</h3>
+                      <p>Alarms</p>
+                    </div>
+                    <div class="icon">
+                      <i class="ion ion-ios-flame"></i>
+                    </div>
+                    <a href="{%url 'alarms'%}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                  </div>
+                </div>
+                <!-- ./col -->
+            </div>
+    </section>
+    <section class="content">
+        <div class="row">
+            <!-- ./col -->
+            {% for station_name, sensors in sensor_data.items %}
+                <div class="col-lg-4 col-6">
+                    <div class="card card-widget widget-user-2">
+                      <!-- Add the bg color to the header using any of the bg-* classes -->
+                      <div class="widget-user-header bg-gradient-secondary">
+                        <div class="widget-user-image">
+                          <img class="img-circle elevation-2" src="{%static 'img/Station_logo.png'%}" alt="User Avatar">
+                        </div>
+                        <!-- /.widget-user-image -->
+                        <h3 class="widget-user-username">Station: {{ station_name }}</h3>
+                        <h5 class="widget-user-desc">{{ station.address }}</h5>
+                      </div>
+                      <div class="card-footer p-0">
+                        <ul class="nav flex-column">
+                        {% for sensor in sensors %}
+                          <li class="nav-item">
+                            <a href="#" class="nav-link">
+                              {{ station_name }}-{{ sensor.sensorName }}<span class="float-right badge" id="{{ station_name }}-{{ sensor.sensorName }}-">Loading...</span>
+                            </a>
+                          </li>
+                        {% endfor %}
+                        </ul>
+                      </div>
+                    </div>
+                </div>
+            {% endfor%}
+        </div>
+    </section>
+    <section class="content">
+        <div class="col-lg-3 col-6">
+            <p></p>
+        </div>
+    </section>
+    <!-- /.content -->
+
+
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <script>
+        // JavaScript para la suscripción MQTT y actualización en tiempo real
+        var client = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+        
+        client.onConnectionLost = onConnectionLost;
+        client.onMessageArrived = onMessageArrived;
+        
+        client.connect({
+            onSuccess: onConnect,
+            useSSL: true,
+        });
+
+        function onConnect() {
+            // Suscripción a los topics de sensores
+            {% for station_name, sensors in sensor_data.items %}
+                {% for sensor in sensors %}
+                    client.subscribe('/{{ station_name }}/{{ sensor.sensorName }}/');
+                    console.log('{{station_name}}')
+                    console.log('{{sensor.sensorName}}')
+                {% endfor %}
+            {% endfor %}
+        }
+
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log('Conexión MQTT perdida: ' + responseObject.errorMessage);
+            }
+        }
+
+        function onMessageArrived(message) {
+            // Cuando llega un mensaje MQTT, actualiza el valor en el card
+            var topic = message.destinationName;
+            var payload = message.payloadString;
+            var ids = topic.split('/').slice(1).join('-'); // Crea el ID usando stationName-sensorName
+            var valueElement = document.getElementById(ids);
+            console.log(ids)
+            if (valueElement) {
+                valueElement.innerHTML = payload;
+            }
+        }
+    </script>
+{% endblock %}

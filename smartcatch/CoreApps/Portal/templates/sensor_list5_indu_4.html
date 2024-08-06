@@ -1,0 +1,1047 @@
+{% extends 'base/body.html' %}
+{% load static %}
+{% block head %}
+    
+    <!-- jQuery UI -->
+    <script src="{% static 'adminlte-3.1.0/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+    <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>
+
+    <script src="{% static 'Highcharts-11.1.0/code/highcharts.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/highcharts-more.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/exporting.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/export-data.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/accessibility.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/series-label.js'%}"></script>
+
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>-->
+
+
+
+    <style>
+        .highcharts-figure .chart-container {
+            width: 300px;
+            height: 200px;
+            float: left;
+        }
+        
+        .highcharts-figure,
+        .highcharts-data-table table {
+            /*Aqui es la anchura de los gauges*/
+            width: 300px;
+            margin: 0 auto;
+        }
+        
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+        
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+        
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+        
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+        
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+        
+        @media (max-width: 200px) {
+            .highcharts-figure,
+            .highcharts-data-table table {
+                width: 100%;
+            }
+        
+            .highcharts-figure .chart-container {
+                width: 400px;
+                float: none;
+                margin: 0 auto;
+            }
+        }
+        
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h4 class="card-title">{{ subTitle }}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">                
+            <!--graficos-->                    
+                {% for sensor_url, sensorname in sensor_names %}
+                <div class="col-lg-3">
+                    <div class="small-box">
+                        <figure class="highcharts-figure">
+                            <div id="{{ sensorname }}_container"></div>
+                        </figure>
+                    </div>
+                </div>
+                {% endfor %}          
+                <!--/.graficos-->
+                <div class="col-lg-3">
+                    <div class="small-box bg-blue" style="text-align:center;"">
+                    <svg
+                        width="170"
+                        height="250"
+                        viewBox="0 0 44.979175 66.145799"
+                        version="1.1"
+                        id="svg5"
+                        xml:space="preserve"
+                        inkscape:export-filename="flowCount.svg"
+                        inkscape:export-xdpi="96"
+                        inkscape:export-ydpi="96"
+                        inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+                        sodipodi:docname="FinalFlowCount3.svg"
+                        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:svg="http://www.w3.org/2000/svg"><sodipodi:namedview
+                             id="namedview7"
+                             pagecolor="#ffffff"
+                             bordercolor="#666666"
+                             borderopacity="1.0"
+                             inkscape:showpageshadow="2"
+                             inkscape:pageopacity="0.0"
+                             inkscape:pagecheckerboard="0"
+                             inkscape:deskcolor="#d1d1d1"
+                             inkscape:document-units="mm"
+                             showgrid="false"
+                             inkscape:zoom="4.7234464"
+                             inkscape:cx="91.246933"
+                             inkscape:cy="76.74481"
+                             inkscape:window-width="1350"
+                             inkscape:window-height="704"
+                             inkscape:window-x="0"
+                             inkscape:window-y="0"
+                             inkscape:window-maximized="0"
+                             inkscape:current-layer="layer1" /><defs
+                             id="defs2" /><g
+                             inkscape:label="Capa 1"
+                             inkscape:groupmode="layer"
+                             id="layer1"><g
+                               id="g332"
+                               transform="matrix(0.07592904,0,0,0.06271774,0.57814392,1.1630474)"><path
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 d="M 581,611 V 999 H 483 V 611 Z"
+                                 id="path289" /><path
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 d="M 95,709 H 483 V 903 H 95 Z"
+                                 id="path291" /><path
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 d="M 95,611 V 999 H 0 V 611 Z"
+                                 id="path293" /><path
+                                 style="fill:#cccccc"
+                                 d="M 581,653 V 957 H 483 V 653 Z"
+                                 id="path295" /><path
+                                 style="fill:#cccccc"
+                                 d="M 95,739 H 483 V 871 H 95 Z"
+                                 id="path297" /><path
+                                 style="fill:#cccccc"
+                                 d="M 95,653 V 957 H 0 V 653 Z"
+                                 id="path299" /><path
+                                 style="fill:#e5e5e5"
+                                 d="M 581,719 V 891 H 483 V 719 Z"
+                                 id="path301" /><path
+                                 style="fill:#e5e5e5"
+                                 d="m 95,775 h 388 v 60 H 95 Z"
+                                 id="path303" /><path
+                                 style="fill:#e5e5e5"
+                                 d="M 95,719 V 891 H 0 V 719 Z"
+                                 id="path305" /><path
+                                 style="fill:#ffffff"
+                                 d="m 581,783 v 44 h -98 v -44 z"
+                                 id="path307" /><path
+                                 style="fill:#ffffff"
+                                 d="m 95,799 h 388 v 12 H 95 Z"
+                                 id="path309" /><path
+                                 style="fill:#ffffff"
+                                 d="m 95,783 v 44 H 0 v -44 z"
+                                 id="path311" /><path
+                                 style="fill:#e50000;stroke:#4c4c4c;stroke-width:2"
+                                 d="M 169,157 95,145 V 11 L 169,0 Z"
+                                 id="path313" /><path
+                                 style="fill:#e50000;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 411,0 72,11 v 134 l -72,12 z"
+                                 id="path315" /><path
+                                 style="fill:#e5e5e5"
+                                 d="m 411,53 h 70 V 35 l -70,-6 z"
+                                 id="path317" /><path
+                                 style="fill:#e5e5e5"
+                                 d="M 169,53 H 99 V 35 l 70,-6 z"
+                                 id="path319" /><path
+                                 style="fill:#ff0000;stroke:#4c4c4c;stroke-width:2"
+                                 d="M 169,0 H 411 V 417 H 169 Z"
+                                 id="path321" /><circle
+                                 style="fill:#ff0000;stroke:#4c4c4c;stroke-width:2"
+                                 cx="290"
+                                 cy="193"
+                                 r="193"
+                                 id="circle323" /><circle
+                                 style="fill:#4c4c4c;stroke:#4c4c4c;stroke-width:2"
+                                 cx="290"
+                                 cy="193"
+                                 r="133"
+                                 id="circle325" /><path
+                                 style="fill:#4c4c4c;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 327,715 -1,2 -2,2 -3,2 -4,2 -6,1 -6,2 h -7 l -7,1 -8,-1 h -7 l -6,-2 -6,-1 -4,-2 -4,-2 -2,-2 -1,-2 V 417 h 74 z"
+                                 id="path327" /><path
+                                 style="fill:#e50000;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 315,385 17,-2 15,-4 15,-5 15,-7 14,-7 13,-9 12,-10 11,-11 11,-11 10,-13 9,-13 7,-14 7,-15 5,-15 4,-15 3,-17 h -32 l -2,13 -4,13 -4,12 -6,12 -6,11 -7,11 -8,10 -9,10 -9,9 -10,8 -10,7 -12,6 -11,6 -12,4 -13,4 -13,2 z"
+                                 id="path329" /><path
+                                 style="fill:#e50000;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 483,169 -3,-16 -4,-16 -5,-15 -7,-15 L 457,93 448,80 438,68 427,56 416,45 404,36 391,27 377,19 362,13 347,8 332,4 315,1 l -2,30 13,3 13,3 13,5 12,5 11,7 11,7 10,8 9,9 9,9 8,11 7,10 6,12 6,11 4,13 4,13 2,12 z"
+                                 id="path331" /><path
+                                 style="fill:#e50000;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 265,1 -16,3 -16,4 -15,5 -14,6 -14,8 -13,9 -13,9 -11,11 -11,12 -9,12 -9,13 -8,14 -6,15 -5,15 -5,16 -3,16 h 32 l 3,-12 3,-13 5,-13 5,-11 6,-12 7,-10 8,-11 9,-9 9,-9 10,-8 11,-7 11,-7 12,-5 12,-5 12,-3 13,-3 z"
+                                 id="path333" /><path
+                                 style="fill:#e50000;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 97,217 3,17 4,15 5,15 6,15 8,14 9,13 9,13 11,11 12,11 12,10 13,9 14,7 15,7 15,5 16,4 16,2 v -30 l -13,-2 -12,-4 -12,-4 -12,-6 -11,-6 -11,-7 -10,-8 -9,-9 -9,-10 -8,-10 -7,-11 -6,-11 -5,-12 -5,-12 -3,-13 -3,-13 z"
+                                 id="path335" /><path
+                                 style="fill:#333333;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 201,153 h 176 v 80 H 201 Z"
+                                 id="path337" /><path
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 211,163 h 158 v 60 H 211 Z"
+                                 id="Number" /><circle
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 cx="289"
+                                 cy="369"
+                                 r="10"
+                                 id="circle341" /><circle
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 cx="466"
+                                 cy="192"
+                                 r="9"
+                                 id="circle343" /><circle
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 cx="288"
+                                 cy="14"
+                                 r="9"
+                                 id="circle345" /><circle
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 cx="111"
+                                 cy="192"
+                                 r="10"
+                                 id="circle347" /><path
+                                 style="fill:#999999;stroke:#4c4c4c;stroke-width:2"
+                                 d="M 235,441 H 345 V 563 H 235 Z"
+                                 id="path349" /><path
+                                 style="fill:#999999;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 235,611 h 110 v 36 H 235 Z"
+                                 id="path351" /><path
+                                 style="fill:#cccccc;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 271,441 h 56 v 122 h -56 z"
+                                 id="path353" /><path
+                                 style="fill:#cccccc;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 271,611 h 56 v 36 h -56 z"
+                                 id="path355" /><path
+                                 style="fill:#666666;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 241,441 h 98 v -6 h -98 z"
+                                 id="path357" /><path
+                                 style="fill:#b2b2b2"
+                                 d="m 235,581 h 110 v 18 H 235 Z"
+                                 id="path359" /><path
+                                 style="fill:#b2b2b2"
+                                 d="m 235,659 h 110 v 18 H 235 Z"
+                                 id="path361" /><path
+                                 style="fill:#cccccc"
+                                 d="m 247,581 h 86 v 18 h -86 z"
+                                 id="path363" /><path
+                                 style="fill:#cccccc"
+                                 d="m 247,659 h 86 v 18 h -86 z"
+                                 id="path365" /><path
+                                 style="fill:#e5e5e5"
+                                 d="m 265,581 h 50 v 18 h -50 z"
+                                 id="path367" /><path
+                                 style="fill:#e5e5e5"
+                                 d="m 265,659 h 50 v 18 h -50 z"
+                                 id="path369" /><path
+                                 style="fill:#ffffff"
+                                 d="m 283,659 h 12 v 18 h -12 z"
+                                 id="path371" /><path
+                                 style="fill:#ffffff"
+                                 d="m 283,581 h 12 v 18 h -12 z"
+                                 id="path373" /><path
+                                 style="fill:#b2b2b2;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 193,883 -6,-84 h 206 l -6,84 z"
+                                 id="path375" /><path
+                                 style="fill:none;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 235,659 h 110 v 18 H 235 v -18"
+                                 id="path377" /><path
+                                 style="fill:none;stroke:#4c4c4c;stroke-width:2"
+                                 d="m 235,581 h 110 v 18 H 235 v -18"
+                                 id="path379" /></g><text
+                               xml:space="preserve"
+                               style="font-style:normal;font-weight:normal;font-size:3.12326px;line-height:1.25;font-family:sans-serif;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.18093"
+                               x="19.29373"
+                               y="56.022945"
+                               id="flowTitle"
+                               transform="scale(1.0147109,0.98550238)"
+                               inkscape:label="#flowTitle"><tspan
+                                 sodipodi:role="line"
+                                 id="tspan544"
+                                 style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.12326px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#008000;stroke-width:0.18093"
+                                 x="19.29373"
+                                 y="56.022945">PCD</tspan></text><rect
+                               style="fill:#cccccc;stroke-width:0.318252"
+                               id="rect588"
+                               width="23.675226"
+                               height="8.5903234"
+                               x="10.658027"
+                               y="9.2181177" /><text
+                               xml:space="preserve"
+                               style="font-style:normal;font-weight:normal;font-size:7.76111px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.201171"
+                               x="11.63781"
+                               y="14.874409"
+                               id="flow"
+                               transform="scale(0.91261884,1.0957477)"
+                               inkscape:label="#flow"><tspan
+                                 sodipodi:role="line"
+                                 id="tspan642"
+                                 style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:7.76111px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#008000;stroke-width:0.201171"
+                                 x="11.63781"
+                                 y="14.874409">000000</tspan></text></g>
+                            </svg>                                
+                    </div>
+                </div>
+                <div class="card col-lg-3">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="fas fa-cog"></i>
+                        Actuators / Outputs
+                      </h3>
+                    </div>
+                    <div class="card-body">
+                        {% for topic, actuator, last_value in last_measurements %}
+                        <button type="button" class="btn btn-block bg-gradient-gray-dark" onclick="increaseValue()">+</button>
+                        <button type="button" class="btn btn-block bg-gradient-gray" onclick="decreaseValue()">-</button>
+                        {% endfor %}
+                        <center> 
+                        <svg
+                           version="1.1"
+                           width="170"
+                           height="80"
+                           viewBox="0 0 298.82812 125.9875"
+                           enable-background="new 0 0 112.5 100.79"
+                           xml:space="preserve"
+                           id="svg452"
+                           sodipodi:docname="PVC two-way ball valve.svg"
+                           inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+                           xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+                           xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+                           xmlns="http://www.w3.org/2000/svg"
+                           xmlns:svg="http://www.w3.org/2000/svg"><defs
+                           id="defs456" /><sodipodi:namedview
+                           id="namedview454"
+                           pagecolor="#ffffff"
+                           bordercolor="#666666"
+                           borderopacity="1.0"
+                           inkscape:showpageshadow="2"
+                           inkscape:pageopacity="0.0"
+                           inkscape:pagecheckerboard="0"
+                           inkscape:deskcolor="#d1d1d1"
+                           showgrid="false"
+                           inkscape:zoom="2"
+                           inkscape:cx="43"
+                           inkscape:cy="30"
+                           inkscape:window-width="1366"
+                           inkscape:window-height="713"
+                           inkscape:window-x="-8"
+                           inkscape:window-y="-8"
+                           inkscape:window-maximized="1"
+                           inkscape:current-layer="Group_Body" />
+                        <g
+                           id="Group_Handle"
+                           transform="matrix(2.5408668,0,0,1.2640293,10.137599,4.0300849)">
+                        	<linearGradient
+                           id="SVGID_1_"
+                           gradientUnits="userSpaceOnUse"
+                           x1="46.734402"
+                           y1="13.8467"
+                           x2="65.652298"
+                           y2="13.8467">
+                        		<stop
+                           offset="0"
+                           style="stop-color:#263A59"
+                           id="stop354" />
+                        		<stop
+                           offset="0.45"
+                           style="stop-color:#A6BAD9"
+                           id="stop356" />
+                        		<stop
+                           offset="0.55"
+                           style="stop-color:#93A7C6"
+                           id="stop358" />
+                        		<stop
+                           offset="0.73"
+                           style="stop-color:#637796"
+                           id="stop360" />
+                        		<stop
+                           offset="0.77"
+                           style="stop-color:#596D8C"
+                           id="stop362" />
+                        		<stop
+                           offset="1"
+                           style="stop-color:#263A59"
+                           id="stop364" />
+                        	</linearGradient>
+                        	<rect
+                           x="46.734001"
+                           fill="url(#SVGID_1_)"
+                           width="18.917999"
+                           height="27.694"
+                           id="rect367"
+                           y="0"
+                           style="fill:url(#SVGID_1_)" />
+                        </g>
+                        <g
+                           id="Group_Bevel"
+                           transform="matrix(1.085111,0,0,1.0900774,77.595821,5.8987459)">
+                        	<linearGradient
+                           id="SVGID_2_"
+                           gradientUnits="userSpaceOnUse"
+                           x1="24.606899"
+                           y1="23.309601"
+                           x2="24.606899"
+                           y2="2.3643">
+                        		<stop
+                           offset="0"
+                           style="stop-color:#263A59"
+                           id="stop370" />
+                        		<stop
+                           offset="0.45"
+                           style="stop-color:#A6BAD9"
+                           id="stop372" />
+                        		<stop
+                           offset="0.55"
+                           style="stop-color:#93A7C6"
+                           id="stop374" />
+                        		<stop
+                           offset="0.73"
+                           style="stop-color:#637796"
+                           id="stop376" />
+                        		<stop
+                           offset="0.77"
+                           style="stop-color:#596D8C"
+                           id="stop378" />
+                        		<stop
+                           offset="1"
+                           style="stop-color:#263A59"
+                           id="stop380" />
+                        	</linearGradient>
+                        	<path
+                           fill="url(#SVGID_2_)"
+                           d="M 0.001,2.364 V 23.31 h 48.084 l 1.126,-1.126 V 3.49 L 48.085,2.364 Z"
+                           id="path383"
+                           style="fill:url(#SVGID_2_)" />
+                        </g>
+
+                        <g
+                           id="Group_Port2"
+                           transform="matrix(2.5408668,0,0,1.2640293,4.7023393,4.0300849)">
+                        	<linearGradient
+                           id="SVGID_3_"
+                           gradientUnits="userSpaceOnUse"
+                           x1="8.5438995"
+                           y1="93.803703"
+                           x2="8.5438995"
+                           y2="56.058601">
+                        		<stop
+                           offset="0"
+                           style="stop-color:#263A59"
+                           id="stop389" />
+                        		<stop
+                           offset="0.45"
+                           style="stop-color:#A6BAD9"
+                           id="stop391" />
+                        		<stop
+                           offset="0.55"
+                           style="stop-color:#93A7C6"
+                           id="stop393" />
+                        		<stop
+                           offset="0.73"
+                           style="stop-color:#637796"
+                           id="stop395" />
+                        		<stop
+                           offset="0.77"
+                           style="stop-color:#596D8C"
+                           id="stop397" />
+                        		<stop
+                           offset="1"
+                           style="stop-color:#263A59"
+                           id="stop399" />
+                        	</linearGradient>
+                        	<polyline
+                           fill="url(#SVGID_3_)"
+                           points="17.088,93.804 0,93.804 0,56.059 16.953,56.059  "
+                           id="polyline402"
+                           style="fill:url(#SVGID_3_)" />
+                        </g>
+                        <g
+                           id="Group_Port1"
+                           transform="matrix(2.5408668,0,0,1.2640293,4.7023393,4.0300849)">
+                        	<linearGradient
+                           id="SVGID_4_"
+                           gradientUnits="userSpaceOnUse"
+                           x1="103.1465"
+                           y1="93.803703"
+                           x2="103.1465"
+                           y2="56.058601">
+                        		<stop
+                           offset="0"
+                           style="stop-color:#263A59"
+                           id="stop405" />
+                        		<stop
+                           offset="0.45"
+                           style="stop-color:#A6BAD9"
+                           id="stop407" />
+                        		<stop
+                           offset="0.55"
+                           style="stop-color:#93A7C6"
+                           id="stop409" />
+                        		<stop
+                           offset="0.73"
+                           style="stop-color:#637796"
+                           id="stop411" />
+                        		<stop
+                           offset="0.77"
+                           style="stop-color:#596D8C"
+                           id="stop413" />
+                        		<stop
+                           offset="1"
+                           style="stop-color:#263A59"
+                           id="stop415" />
+                        	</linearGradient>
+                        	<polyline
+                           fill="url(#SVGID_4_)"
+                           points="93.794,56.059 112.498,56.059 112.498,93.804 93.941,93.804  "
+                           id="polyline418"
+                           style="fill:url(#SVGID_4_)" />
+                        </g>
+                        <g
+                           id="Group_Body"
+                           transform="matrix(1.3152026,0,0,1,55.722325,-0.84427766)">
+                        	<linearGradient
+                           id="SVGID_5_"
+                           gradientUnits="userSpaceOnUse"
+                           x1="56.081501"
+                           y1="100.7852"
+                           x2="56.081501"
+                           y2="49.2104"
+                           gradientTransform="matrix(1.9319204,0,0,1.2640293,-38.792492,4.8743621)">
+                        		<stop
+                           offset="0"
+                           style="stop-color:#263A59"
+                           id="stop421" />
+                        		<stop
+                           offset="0.45"
+                           style="stop-color:#A6BAD9"
+                           id="stop423" />
+                        		<stop
+                           offset="0.55"
+                           style="stop-color:#93A7C6"
+                           id="stop425" />
+                        		<stop
+                           offset="0.73"
+                           style="stop-color:#637796"
+                           id="stop427" />
+                        		<stop
+                           offset="0.77"
+                           style="stop-color:#596D8C"
+                           id="stop429" />
+                        		<stop
+                           offset="1"
+                           style="stop-color:#263A59"
+                           id="stop431" />
+                        	</linearGradient>
+                        	<rect
+                           x="-12.029599"
+                           y="67.07724"
+                           fill="url(#SVGID_5_)"
+                           width="163.16422"
+                           height="65.192322"
+                           id="rect434"
+                           style="fill:url(#SVGID_5_);stroke-width:1.5627" />
+                        	<linearGradient
+                           id="SVGID_6_"
+                           gradientUnits="userSpaceOnUse"
+                           x1="37.387699"
+                           y1="44.568802"
+                           x2="74.886703"
+                           y2="44.568802"
+                           gradientTransform="matrix(1.7284565,0,0,1.2640293,-23.556097,4.8743621)">
+                        		<stop
+                           offset="0"
+                           style="stop-color:#263A59"
+                           id="stop436" />
+                        		<stop
+                           offset="0.45"
+                           style="stop-color:#A6BAD9"
+                           id="stop438" />
+                        		<stop
+                           offset="0.55"
+                           style="stop-color:#93A7C6"
+                           id="stop440" />
+                        		<stop
+                           offset="0.73"
+                           style="stop-color:#637796"
+                           id="stop442" />
+                        		<stop
+                           offset="0.77"
+                           style="stop-color:#596D8C"
+                           id="stop444" />
+                        		<stop
+                           offset="1"
+                           style="stop-color:#263A59"
+                           id="stop446" />
+                        	</linearGradient>
+                        	<path
+                           fill="url(#SVGID_6_)"
+                           d="m 41.261021,37.469888 v 27.787157 c -0.122728,0.599149 -0.195316,1.204619 -0.195316,1.820203 0,9.313368 14.856086,17.874635 32.698942,17.874635 17.842857,0 31.919393,-8.560003 31.919393,-17.874635 h 0.19532 v -29.60736 z"
+                           id="path449"
+                           style="fill:url(#SVGID_6_);stroke-width:1.47813" />
+                        <g
+                           id="Group_Display"
+                           transform="matrix(2.3082518,0,0,3.1804225,14.202508,59.815512)"
+                           style="fill:#b3b3b3">
+                        	<path
+                           fill="#596d8c"
+                           d="m 2.254,4.617 v 16.44 h 43.58 l 0.901,-0.9 V 5.518 l -0.901,-0.9 H 2.254 Z"
+                           id="path386"
+                           style="fill:#b3b3b3" />
+                        </g><text
+                           xml:space="preserve"
+                           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:49.0486px;line-height:1.25;font-family:'Cascadia Mono';-inkscape-font-specification:'Cascadia Mono, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#008000;fill-opacity:1;stroke:none;stroke-width:1.53277"
+                           x="39.581684"
+                           y="105.45223"
+                           id="MeasurementActu"
+                           transform="scale(0.87197429,1.1468228)"
+                           inkscape:label="#MeasurementActu"><tspan
+                             sodipodi:role="line"
+                             id="tspan683"
+                             style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:49.0486px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#008000;stroke-width:1.53277"
+                             x="39.581684"
+                             y="105.45223">100</tspan></text></g>
+                        </svg>
+                        </center> 
+                    </div>
+                </div>
+        </div>
+        <div class="row">
+                <div class="col-lg-6" id="historical_data_container"></div>
+                <div class="col-lg-6" id="historical_data_container_flow"></div>
+        </div>        
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+    // Inicializa el cliente MQTT
+    var clients = {};    
+    // Conéctate al servidor MQTT y suscríbete a los temas de los sensores
+   {% for sensor_url, sensorname in sensor_names %}
+    clients["{{ sensorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+    clients["{{ sensorname }}"].onMessageArrived = function (message) {
+        var newValue = parseFloat(message.payloadString);
+        updateChart("{{ sensorname }}", newValue);
+        updateHistoricalData("{{ sensorname }}", newValue);
+    };
+
+    // Cambio en la URL de conexión para utilizar wss:// en lugar de ws://
+    var mqttOptions = {
+        onSuccess: function () {
+            console.log("Conexión exitosa al servidor MQTT para {{ sensorname }}");
+            clients["{{ sensorname }}"].subscribe("{{ sensor_url }}");
+        },
+        onFailure: function (message) {
+            console.log("Error en la conexión MQTT para {{ sensorname }}: " + message.errorMessage);
+        }
+    };
+
+    // Agregar la propiedad useSSL con el valor true
+    mqttOptions.useSSL = true;
+
+    clients["{{ sensorname }}"].connect(mqttOptions);
+    {% endfor %}
+
+
+    {% for actuator_url, actuatorname in actuators_names %}
+    clients["{{ actuatorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+    clients["{{ actuatorname }}"].onMessageArrived = function (message) {
+        var newValue = parseFloat(message.payloadString);
+        console.log(newValue);
+        updateActuatorsText(newValue);
+    };
+    var mqttOptions = {
+        onSuccess: function () {
+            console.log("Actuators Conexión exitosa al servidor MQTT para {{ actuatorname }}");
+            clients["{{ actuatorname }}"].subscribe("{{ actuator_url }}");
+            console.log(clients["{{ actuatorname }}"].subscribe("{{ actuator_url }}"));
+
+            const lastMeasurement = {% if last_measurements %} "{{ last_measurements.0.2 }}" {% else %} 0 {% endif %};
+            document.getElementById("MeasurementActu").textContent = lastMeasurement;
+            
+        },
+        onFailure: function (message) {
+            console.log("Error en la conexión MQTT para {{ actuatorname }}: " + message.errorMessage);
+        }
+    };
+    // Agregar la propiedad useSSL con el valor true
+    mqttOptions.useSSL = true;
+
+    clients["{{ actuatorname }}"].connect(mqttOptions);
+    {% endfor %}
+
+    //Funciones para incrementar o decrementar el actuators
+
+    function increaseValue() {
+        const measurementText = document.getElementById("MeasurementActu");
+        let value = parseInt(measurementText.textContent, 10) + 5;
+
+        if (value <= 100) {
+          measurementText.textContent = value;
+        
+        {% for actuator_url, actuatorname in actuators_names %}
+        var actuatorClient = "{{actuatorname}}";
+        console.log(actuatorClient) // Obtener el valor de data-actuator-name
+        var actuatorUrl = "{{actuator_url}}";
+        console.log(actuatorUrl);
+        {% endfor %}
+                if (clients[actuatorClient]) {
+                    var message = new Paho.MQTT.Message(value.toString());
+                    message.destinationName = actuatorUrl;
+                    console.log(message)
+                    clients[actuatorClient].send(message);
+                } else {
+                    console.log("No se pudo encontrar el cliente MQTT para");
+                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
+                }
+        }
+    };   
+
+    function decreaseValue() {
+        const measurementText = document.getElementById("MeasurementActu");
+        let value = parseInt(measurementText.textContent, 10) - 10;
+
+        if (value >= 0) {
+          measurementText.textContent = value;
+        
+        {% for actuator_url, actuatorname in actuators_names %}
+        var actuatorClient = "{{actuatorname}}";
+        console.log(actuatorClient) // Obtener el valor de data-actuator-name
+        var actuatorUrl = "{{actuator_url}}";
+        console.log(actuatorUrl);
+        {% endfor %}
+                if (clients[actuatorClient]) {
+                    var message = new Paho.MQTT.Message(value.toString());
+                    message.destinationName = actuatorUrl;
+                    console.log(message)
+                    clients[actuatorClient].send(message);
+                } else {
+                    console.log("No se pudo encontrar el cliente MQTT para");
+                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
+                }
+        }
+    };
+
+
+    // Configura la suscripción y actualización para sensor_with_f
+    // Configura la suscripción y actualización para sensor_with_f
+{% for sensor_url in sensors_with_f %}
+var sensornew = "{{sensors_with_f}}"
+var sensorWithFClient = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+sensorWithFClient.onMessageArrived = function (message) {
+    var newValue = parseFloat(message.payloadString);
+    console.log(newValue);
+    updateFlowText(newValue);
+    updateHistoricalDataFlow("sensor_with_f", newValue);
+};
+
+var mqttOptions2 = {
+    useSSL: true,
+    onSuccess: function () {
+        console.log("Conexión exitosa al servidor MQTT para sensor_with_f");
+        // Suscríbete a los temas en sensors_with_f
+        sensorWithFClient.subscribe("{{ sensor_url }}");
+    },
+    onFailure: function (message) {
+        console.log("Error en la conexión MQTT para sensor_with_f: " + message.errorMessage);
+    },
+};
+
+sensorWithFClient.connect(mqttOptions2);
+{% endfor %}
+
+    function updateChart(sensorName, newValue) {
+        var chart = Highcharts.charts.find(chart => chart.renderTo.id === sensorName + '_container');
+        if (chart && !chart.renderer.forExport) {
+            var point = chart.series[0].points[0];
+            point.update(newValue);
+        }
+        console.log(clients);
+    }
+
+    //Actualizar valores de flow y actuator de acuerdo a lo que llegue en el mqtt
+    function updateFlowText(newValue) {
+        var flowText = document.getElementById('flow');
+        if (flowText) {
+            flowText.textContent = newValue;
+            console.log(flowText);
+        }
+    }
+
+    function updateActuatorsText(newValue) {
+        var ActuatorText = document.getElementById('MeasurementActu');
+        if (ActuatorText) {
+            ActuatorText.textContent = newValue;
+            console.log(ActuatorText);
+        }
+    }
+
+    // Configura los gráficos para cada sensor
+    {% for sensor_url, sensorname in sensor_names %}
+    Highcharts.chart('{{ sensorname }}_container', {
+        chart: {
+            type: 'gauge',
+            plotBackgroundColor: null,
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false,
+            height: '80%'
+        },
+        title: {
+            text: '{{ sensorname }}'
+        },
+        pane: {
+            startAngle: -90,
+            endAngle: 89.9,
+            background: null,
+            center: ['50%', '75%'],
+            size: '120%'
+        },
+        yAxis: {
+            min: 0,
+            max: 300,
+            tickPixelInterval: 72,
+            tickPosition: 'inside',
+            tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+            tickLength: 20,
+            tickWidth: 2,
+            minorTickInterval: null,
+            labels: {
+                distance: 20,
+                style: {
+                    fontSize: '17px'
+                }
+            },
+            lineWidth: 0,
+            plotBands: [
+                {
+                    from: 0,
+                    to: 200,
+                    color: '#55BF3B', // green
+                    thickness: 20
+                },
+                {
+                    from: 200,
+                    to: 250,
+                    color: '#DDDF0D', // yellow
+                    thickness: 20
+                },
+                {
+                    from: 250,
+                    to: 300,
+                    color: '#DF5353', // red
+                    thickness: 20
+                }
+            ]
+        },
+        series: [
+            {
+                name: 'Pressure',
+                data: [0],
+                tooltip: {
+                    valueSuffix: ' PSI'
+                },
+                dataLabels: {
+                    format: '{y} PSI',
+                    borderWidth: 0,
+                    color: (
+                        Highcharts.defaultOptions.title &&
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                    ) || '#333333',
+                    style: {
+                        fontSize: '16px'
+                    }
+                },
+                dial: {
+                    radius: '90%',
+                    backgroundColor: 'gray',
+                    baseWidth: 12,
+                    baseLength: '0%',
+                    rearLength: '0%'
+                },
+                pivot: {
+                    backgroundColor: 'gray',
+                    radius: 6
+                }
+            }
+        ]
+    });
+    {% endfor %}
+    //Graficos para presiones
+    Highcharts.chart('historical_data_container', {
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: 'Historical facts'
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Time'
+            }
+        
+        },
+        yAxis: {
+            title: {
+                text: 'Pressure (PSI)'
+            }
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+        series: []
+    });
+
+    // Función para actualizar la serie de tiempo con datos históricos de presiones
+    function updateHistoricalData(sensorName, newValue) {
+    var chart = Highcharts.charts.find(chart => chart.renderTo.id === 'historical_data_container');
+    if (chart && !chart.renderer.forExport) {
+        var series = chart.series.find(series => series.name === sensorName);
+        var currentTime = new Date().getTime(); // Obtiene el timestamp actual
+        if (!series) {
+            series = chart.addSeries({
+                name: sensorName,
+                data: [[currentTime, newValue]] // Usa el timestamp actual
+            });
+        } else {
+            series.addPoint([currentTime, newValue], true, series.data.length >= 20); // Limita el número de puntos en la serie
+        }
+        }
+    }
+
+    Highcharts.setOptions({
+        global:{
+            useUTC: false
+        }
+    });
+
+    Highcharts.chart('historical_data_container_flow', {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Historical Flow Data'
+            },
+            xAxis: {
+                type: 'datetime',
+                title: {
+                    text: 'Time'
+                }
+            
+            },
+            yAxis: {
+                title: {
+                    text: 'Flow Count'
+                }
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        enabled: true
+                    }
+                }
+            },
+            series: []
+        });
+    
+
+        function updateHistoricalDataFlow(sensorName, newValue) {
+    var chart = Highcharts.charts.find(chart => chart.renderTo.id === 'historical_data_container_flow');
+    if (chart && !chart.renderer.forExport) {
+        var series = chart.series.find(series => series.name === sensorName);
+        var currentTime = new Date().toLocaleString('en-US', { timeZone: 'America/Guayaquil' }); // Cambia 'America/New_York' a tu zona horaria
+        currentTime = new Date(currentTime).getTime(); // Obtiene el timestamp local en milisegundos
+        if (!series) {
+            series = chart.addSeries({
+                name: sensorName,
+                data: [[currentTime, newValue]] // Usa el timestamp local
+            });
+        } else {
+            series.addPoint([currentTime, newValue], true, series.data.length >= 20); // Limita el número de puntos en la serie
+        }
+    }
+}
+
+
+
+ //   function updateHistoricalDataFlow(sensorName, newValue) {
+ //   var chart = Highcharts.charts.find(chart => chart.renderTo.id === 'historical_data_container_flow');
+ //   if (chart && !chart.renderer.forExport) {
+ //       var series = chart.series.find(series => series.name === sensorName);
+ //       var currentTime = new Date().getTime(); // Obtiene el timestamp actual
+ //       if (!series) {
+ //           series = chart.addSeries({
+ //               name: sensorName,
+ //               data: [[currentTime, newValue]] // Usa el timestamp actual
+ //           });
+ //       } else {
+ //           series.addPoint([currentTime, newValue], true, series.data.length >= 10); // Limita el número de puntos en la serie
+ //       }
+ //       }
+ //   }
+
+</script>
+    
+{% endblock %}

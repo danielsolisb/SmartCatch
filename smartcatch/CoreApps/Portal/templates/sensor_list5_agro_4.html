@@ -1,0 +1,472 @@
+{% extends 'base/body.html' %}
+{% load static %}
+{% block head %}
+    
+    <!-- jQuery UI -->
+    <script src="{% static 'adminlte-3.1.0/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+    <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>
+
+    <script src="{% static 'Highcharts-11.1.0/code/highcharts.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/highcharts-more.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/exporting.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/export-data.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/accessibility.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/series-label.js'%}"></script>
+
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>-->
+
+
+
+    <style>
+        .highcharts-figure .chart-container {
+            width: 300px;
+            height: 200px;
+            float: left;
+        }
+        
+        .highcharts-figure,
+        .highcharts-data-table table {
+            width: 300px;
+            margin: 0 auto;
+        }
+        
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+        
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+        
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+        
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+        
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+        
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+        
+        @media (max-width: 200px) {
+            .highcharts-figure,
+            .highcharts-data-table table {
+                width: 100%;
+            }
+        
+            .highcharts-figure .chart-container {
+                width: 400px;
+                float: none;
+                margin: 0 auto;
+            }
+        }
+        
+    </style>
+{% endblock %}
+
+{% block content %}
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4 class="card-title">{{ subTitle }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">                           
+        <!--graficos-->                    
+            {% for sensor_url, sensorname in sensor_names %}
+            <div class="col-lg-3">
+                <div class="small-box">
+                    <figure class="highcharts-figure">
+                        <div id="{{ sensorname }}_container"></div>
+                    </figure>
+                </div>
+            </div>
+            {% endfor %}          
+            <!--/.graficos-->        
+        </div>
+        <div class="row">
+            <!--charts-->
+            <div class="col-lg-9" id="historical_data_container" style="min-height: 300px; overflow-y: auto;"></div>
+            <!--/.charts-->
+            <!--Button-->
+            <div class="card col-lg-3">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-cog"></i>
+                  Actuators / Outputs
+                </h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                {% for topic, actuator, last_value in last_measurements %}
+                    <button type="button" class="btn btn-block change-color-button" data-irrigation-value="{{ last_value|default:""}}" data-actuator-name="{{ actuator }}" data-topic-name="{{topic}}">{{ actuator }}</button>
+                {% endfor %}
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!--/.Button-->
+        </div>          
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+    //Actuadores estado para botones
+    $(document).ready(function() {
+        $('.change-color-button').each(function() {
+            var lastValue = $(this).data('irrigation-value');
+            var actuatorName = $(this).data('actuator-name');
+            if (lastValue === 1 || lastValue === 0) {
+                $(this).removeClass('btn-outline-dark');
+                $(this).addClass('bg-gradient-primary');
+            } else {
+                $(this).addClass('btn-outline-dark');
+            }
+
+            // Agregar un manejador de clic a los botones
+            $(this).click(function() {
+                var newValue = 1; // Valor predeterminado a 1
+                var button = $(this); // Guardar una referencia al botón actual
+
+                // Cambiar el estilo del botón y determinar el nuevo valor
+                if (button.hasClass('bg-gradient-primary')) {
+                    button.removeClass('bg-gradient-primary');
+                    button.addClass('btn-outline-dark');
+                    newValue = 0;
+                } else {
+                    button.removeClass('btn-outline-dark');
+                    button.addClass('bg-gradient-primary');
+                }
+
+                // Publicar el nuevo valor en el tópico MQTT correspondiente, si está definido
+                var actuatorClient = button.data('actuator-name'); // Obtener el valor de data-actuator-name
+                var actuatorUrl = button.data('topic-name');
+                if (clients[actuatorClient]) {
+                    var message = new Paho.MQTT.Message(newValue.toString());
+                    message.destinationName = actuatorUrl;
+                    clients[actuatorClient].send(message);
+                } else {
+                    console.log("No se pudo encontrar el cliente MQTT para");
+                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
+                }
+            });
+        });
+    });
+
+
+    // Inicializa el cliente MQTT
+    var clients = {};
+    // Conéctate al servidor MQTT y suscríbete a los temas de los sensores
+    {% for sensor_url, sensorname in sensor_names %}
+    clients["{{ sensorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+    clients["{{ sensorname }}"].onMessageArrived = function (message) {
+        var newValue = parseFloat(message.payloadString);
+        updateChart("{{ sensorname }}", newValue);
+        updateHistoricalData("{{ sensorname }}", newValue);
+    };
+    // Cambio en la URL de conexión para utilizar wss:// en lugar de ws://
+    var mqttOptions = {
+        onSuccess: function () {
+            console.log("Conexión exitosa al servidor MQTT para {{ sensorname }}");
+            clients["{{ sensorname }}"].subscribe("{{ sensor_url }}");
+        },
+        onFailure: function (message) {
+            console.log("Error en la conexión MQTT para {{ sensorname }}: " + message.errorMessage);
+        }
+    };
+
+    // Agregar la propiedad useSSL con el valor true
+    mqttOptions.useSSL = true;
+
+    clients["{{ sensorname }}"].connect(mqttOptions);
+    {% endfor %}
+    
+    //subscribe actuators
+    {% for actuator_url, actuatorname in actuators_names %}
+    clients["{{ actuatorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+    clients["{{ actuatorname }}"].onMessageArrived = function (message) {
+        var newValue = parseFloat(message.payloadString);
+        console.log(newValue);
+    };
+    var mqttOptions = {
+        onSuccess: function () {
+            console.log("Actuators Conexión exitosa al servidor MQTT para {{ actuatorname }}");
+            clients["{{ actuatorname }}"].subscribe("{{ actuator_url }}");
+            console.log(clients["{{ actuatorname }}"].subscribe("{{ actuator_url }}"));
+        },
+        onFailure: function (message) {
+            console.log("Error en la conexión MQTT para {{ actuatorname }}: " + message.errorMessage);
+        }
+    };
+    mqttOptions.useSSL = true;
+
+    clients["{{ actuatorname }}"].connect(mqttOptions);
+
+    {% endfor %}
+
+    //Actualiza el chart container
+    function updateChart(sensorName, newValue) {
+        var chart = Highcharts.charts.find(chart => chart.renderTo.id === sensorName + '_container');
+        if (chart && !chart.renderer.forExport) {
+            var point = chart.series[0].points[0];
+            point.update(newValue);
+        }
+    }
+
+
+
+    // Configura los gráficos para cada sensor
+    {% for sensor_url, sensorname in sensor_names %}
+
+    {% if sensorname.0 == 'T' %}
+    var maxG= 60;
+    var From1= 0; var To1=40
+    var From2= 40; var To2=50
+    var From3= 50; var To3=60
+    {% elif sensorname.0 == 'H' %}
+    var maxG = 100;
+    var From1= 0; var To1=60
+    var From2= 60; var To2=80
+    var From3= 80; var To3=100
+    {% else %}
+    var maxG = 100;
+    var From1= 0; var To1=60
+    var From2= 60; var To2=80
+    var From3= 80; var To3=100
+    {% endif %}
+    
+    Highcharts.chart('{{ sensorname }}_container', {
+        chart: {
+            type: 'gauge',
+            plotBackgroundColor: null,
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false,
+            height: '75%'
+        },
+        title: {
+            text: '{{ sensorname }}'
+        },
+        pane: {
+            startAngle: -90,
+            endAngle: 89.9,
+            background: null,
+            center: ['50%', '75%'],
+            size: '120%'
+        },
+        yAxis: {
+            min: 0,
+            max: maxG,
+            tickPixelInterval: 72,
+            tickPosition: 'inside',
+            tickColor: Highcharts.defaultOptions.chart.backgroundColor || '#FFFFFF',
+            tickLength: 20,
+            tickWidth: 2,
+            minorTickInterval: null,
+            labels: {
+                distance: 20,
+                style: {
+                    fontSize: '12px'
+                }
+            },
+            lineWidth: 0,
+            plotBands: [
+                {
+                    from: From1,
+                    to: To1,
+                    color: '#55BF3B', // green
+                    thickness: 20
+                },
+                {
+                    from: From2,
+                    to: To2,
+                    color: '#DDDF0D', // yellow
+                    thickness: 20
+                },
+                {
+                    from: From3,
+                    to: To3,
+                    color: '#DF5353', // red
+                    thickness: 20
+                }
+            ]
+        },
+        series: [
+            {   
+                {% if sensorname.0 == 'T' %}
+                name: 'Temperature',
+                data: [0],
+                tooltip: {
+                    valueSuffix: '°C'
+                },
+                dataLabels: {
+                    format: '{y} °C',
+                    borderWidth: 0,
+                    color: (
+                        Highcharts.defaultOptions.title &&
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                    ) || '#333333',
+                    style: {
+                        fontSize: '16px'
+                    }
+                },
+                {% elif sensorname.0 == 'H' %}
+                name: 'Humedity',
+                data: [0],
+                tooltip: {
+                    valueSuffix: '%'
+                },
+                dataLabels: {
+                    format: '{y} %',
+                    borderWidth: 0,
+                    color: (
+                        Highcharts.defaultOptions.title &&
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                    ) || '#333333',
+                    style: {
+                        fontSize: '16px'
+                    }
+                },
+                {% else %}
+                name: 'Valor',
+                data: [0],
+                tooltip: {
+                    valueSuffix: ''
+                },
+                dataLabels: {
+                    format: '{y} ',
+                    borderWidth: 0,
+                    color: (
+                        Highcharts.defaultOptions.title &&
+                        Highcharts.defaultOptions.title.style &&
+                        Highcharts.defaultOptions.title.style.color
+                    ) || '#333333',
+                    style: {
+                        fontSize: '16px'
+                    }
+                },
+                {% endif %}
+                dial: {
+                    radius: '90%',
+                    backgroundColor: 'gray',
+                    baseWidth: 8,
+                    baseLength: '0%',
+                    rearLength: '0%'
+                },
+                pivot: {
+                    backgroundColor: 'gray',
+                    radius: 6
+                }
+            }
+        ]
+    });
+    {% endfor %}
+
+    //Graficos para presiones historical
+    Highcharts.chart('historical_data_container', {
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: 'Historical facts'
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Time'
+            }
+        
+        },
+        yAxis: {
+            title: {
+                text: 'Valores'
+            }
+        },
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+        series: []
+    });
+
+    // Función para actualizar la serie de tiempo con datos históricos de presiones
+    function updateHistoricalData(sensorName, newValue) {
+    var chart = Highcharts.charts.find(chart => chart.renderTo.id === 'historical_data_container');
+    if (chart && !chart.renderer.forExport) {
+        var series = chart.series.find(series => series.name === sensorName);
+        var currentTime = new Date().getTime(); // Obtiene el timestamp actual
+        if (!series) {
+            series = chart.addSeries({
+                name: sensorName,
+                data: [[currentTime, newValue]] // Usa el timestamp actual
+            });
+        } else {
+            series.addPoint([currentTime, newValue], true, series.data.length >= 50); // Limita el número de puntos en la serie
+        }
+        }
+    }
+
+    Highcharts.setOptions({
+        global:{
+            useUTC: false
+        }
+    });
+
+   
+    
+
+        
+
+
+
+ //   function updateHistoricalDataFlow(sensorName, newValue) {
+ //   var chart = Highcharts.charts.find(chart => chart.renderTo.id === 'historical_data_container_flow');
+ //   if (chart && !chart.renderer.forExport) {
+ //       var series = chart.series.find(series => series.name === sensorName);
+ //       var currentTime = new Date().getTime(); // Obtiene el timestamp actual
+ //       if (!series) {
+ //           series = chart.addSeries({
+ //               name: sensorName,
+ //               data: [[currentTime, newValue]] // Usa el timestamp actual
+ //           });
+ //       } else {
+ //           series.addPoint([currentTime, newValue], true, series.data.length >= 10); // Limita el número de puntos en la serie
+ //       }
+ //       }
+ //   }
+</script>
+    
+{% endblock %}

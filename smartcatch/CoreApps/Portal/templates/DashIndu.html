@@ -1,0 +1,241 @@
+{% extends 'base/body.html' %}
+{% load static %}
+{% block head %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="{% static 'adminlte-3.1.0/plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'adminlte-3.1.0/js/demo.js' %}"></script>
+    
+    
+
+    
+    <!--plugins fullcalendar -->
+    <link rel="stylesheet" href="{% static 'fullcalendar-5.8.0/lib/main.css' %}" />
+    <script src="{% static 'fullcalendar-5.8.0/lib/main.js' %}"></script>
+    <script src="{% static 'fullcalendar-5.8.0/lib/locales-all.js' %}"></script>
+
+
+
+{% endblock %}
+
+{% block content %}
+ <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <!-- Small boxes (Stat box) -->
+        <div class="row">
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{stations_num}}</h3>
+                <p>Registered stations</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-checkmark"></i>
+              </div>
+              <a href="{%url 'Dashboard'%}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{user_warnings.count}}</h3>
+                <p>Warnings</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-android-alert"></i>
+              </div>
+              <a href="{%url 'warnings'%}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+          <div class="col-lg-4 col-6">
+            <!-- small box -->
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>{{user_alarms.count }}</h3>
+                <p>Alarms</p>
+              </div>
+              <div class="icon">
+                <i class="ion ion-ios-flame"></i>
+              </div>
+              <a href="{%url 'alarms'%}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+      <div class="row">
+        <div class="col-lg-6">
+          <!-- AREA CHART WARNINGS-->
+          <div class="card card-primary">
+           <div class="card-header">
+             <h3 class="card-title">latest Warnings</h3>
+
+             <div class="card-tools">
+               <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                 <i class="fas fa-minus"></i>
+               </button>
+               <button type="button" class="btn btn-tool" data-card-widget="remove">
+                 <i class="fas fa-times"></i>
+               </button>
+             </div>
+           </div>
+           <div class="card-body">
+             <div class="chart">
+               <canvas id="areaChartWarning" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+             </div>
+           </div>
+           <!-- /.card-body -->
+         </div>
+       </div>
+        <div class="col-lg-6">
+           <!-- AREA CHART ALARMS-->
+           <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">latest Alarms</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-card-widget="remove">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart">
+                <canvas id="areaChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+            </div>
+            <!-- /.card-body -->
+          </div>
+        </div>
+        
+      </div> 
+
+    </section>
+    <!-- /.content -->
+
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+var timestamps = {{ timestamps|safe }};
+var values = {{ values|safe }};
+
+var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
+
+var areaChartData = {
+  labels  : timestamps,
+  datasets: [
+    {
+      label: 'Alarms Data',
+      backgroundColor: 'rgba(255,0,0,0.9)', // Color de fondo para el nuevo gráfico
+      borderColor: 'rgba(255,0,0,0.8)',     // Color del borde para el nuevo gráfico
+      pointRadius: false,
+      pointColor: '#FF0000',               // Color de los puntos para el nuevo gráfico
+      pointStrokeColor: 'rgba(255,0,0,1)',
+      pointHighlightFill: '#fff',
+      pointHighlightStroke: 'rgba(255,0,0,1)',
+      data: values
+    },
+    
+  ]
+}
+
+
+var areaChartOptions = {
+  maintainAspectRatio : false,
+  responsive : true,
+  legend: {
+    display: false
+  },
+  scales: {
+    xAxes: [{
+      gridLines : {
+        display : false,
+      }
+    }],
+    yAxes: [{
+      gridLines : {
+        display : false,
+      }
+    }]
+  }
+}
+
+
+
+// This will get the first returned node in the jQuery collection.
+new Chart(areaChartCanvas, {
+  type: 'line',
+  data: areaChartData,
+  options: areaChartOptions
+})
+
+//GRAFICO PARA WARNING
+var timestampsw = {{ timestampsw|safe }};
+var valuesw = {{ valuesw|safe }};
+
+var areaChartWarningCanvas = $('#areaChartWarning').get(0).getContext('2d')
+
+var areaChartWarningData = {
+  labels: timestampsw,
+  datasets: [
+    {
+      label               : 'Warning Data',
+      backgroundColor     : 'rgba(60,141,188,0.9)',
+      borderColor         : 'rgba(60,141,188,0.8)',
+      pointRadius          : false,
+      pointColor          : '#3b8bba',
+      pointStrokeColor    : 'rgba(60,141,188,1)',
+      pointHighlightFill  : '#fff',
+      pointHighlightStroke: 'rgba(60,141,188,1)',
+      data                : valuesw
+    },
+  ]
+}
+
+var areaChartWarningOptions = {
+  maintainAspectRatio: false,
+  responsive: true,
+  legend: {
+    display: false
+  },
+  scales: {
+    xAxes: [{
+      gridLines: {
+        display: false,
+      }
+    }],
+    yAxes: [{
+      gridLines: {
+        display: false,
+      }
+    }]
+  }
+}
+
+// Crear el nuevo gráfico
+new Chart(areaChartWarningCanvas, {
+  type: 'line',
+  data: areaChartWarningData,
+  options: areaChartWarningOptions
+})
+
+
+
+</script>
+{% endblock %}

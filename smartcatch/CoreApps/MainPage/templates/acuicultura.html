@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="IoT cloud, customizable iot, real time monitoring, real time data, " />
+        <meta name="author" content="Daniel Solís" />
+        <meta name="keywords" content="IoT, cloud, real time data, sensors, hardware IoT">
+        <title>TechDevSA - Sistemas personalizados de IoT</title>
+        <!-- Favicon-->
+        <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="{%static 'css/styles.css'%}" rel="stylesheet" />
+    </head>
+    <body class="d-flex flex-column h-100">
+        <main class="flex-shrink-0">
+            <!-- Navigation-->
+            <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5" id="header-wrapper">
+                    <a class="navbar-brand" href="{%url 'mainpage'%}">
+                        <img src="{% static 'img/TECHDEVSA_LOGO_NAVBAR.png' %}" alt="..." height="46">
+                        TECHDEVSA
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="{%url 'mainpage'%}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{%url 'about'%}">Nosotros</a></li>                          
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownPortfolio" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Servicios</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownPortfolio">
+                                    <li><a class="dropdown-item" href="{%url 'industrial'%}">Industrial</a></li>
+                                    <li><a class="dropdown-item" href="{%url 'agroiot'%}">Agro-IoT</a></li>
+                                    <li><a class="dropdown-item" href="{%url 'avicolaiot'%}">Avicultura-IoT</a></li>
+                                    <li><a class="dropdown-item" href="{%url 'acuicultura'%}">Acuicultura-IoT</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" href="{%url 'contact'%}">Contacto</a></li> 
+                            {% if request.user.is_authenticated %}
+                            <li class="nav-item"><a class="nav-link" href="{%url 'Dashboard'%}">Dashboard</a></li>
+                            {%else%}
+                            <li class="nav-item"><a class="nav-link" href="{%url 'login'%}">Login</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <!-- Page Content-->
+             <section class="py-5">
+                <div class="container px-5">
+                    <h1 class="fw-bolder fs-5 mb-4">Acuicultura IoT</h1>
+                    <div class="card border-0 shadow rounded-3 overflow-hidden">
+                        <div class="card-body p-0">
+                            <div class="row gx-0">
+                                <div class="col-lg-6 col-xl-5 py-lg-5">
+                                    <div class="p-4 p-md-5">
+                                        <div class="badge bg-primary bg-gradient rounded-pill mb-2">Nuevo</div>
+                                        <div class="h2 fw-bolder">Monitoreo de parámetros del agua</div>
+                                        <p>Resuelve el problema de monitorear y ajustar la calidad óptima del agua las 24 horas del día en ambientes acuícolas </p>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-lg-6 col-xl-7"><div class="bg-featured-blog" style="background-image: url('{% static 'img/acuicultura.png'%}')"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="py-5 bg-light">
+                <div class="container px-5">
+                    <div class="row gx-5">
+                        <div class="col-xl-8">
+                            <h2 class="fw-bolder fs-5 mb-4">Como funciona</h2>
+                            <!-- News item-->
+                            <div class="mb-5">
+                                <div class="link-dark"></div>
+                                <p>Se implementan en las piscinas para llevar a cabo un monitoreo constante, transmitiendo datos de manera continua a una aplicación web ubicada en la nube. Esta aplicación no solo registra los parámetros relevantes, sino que también emite alertas instantáneas en situaciones críticas, facilitando así una respuesta rápida y efectiva ante posibles problemas</p>
+                            </div>
+                            <!--<div class="text-end mb-5 mb-xl-0">
+                                <a class="text-decoration-none" href="#!">
+                                    Pronto mas información
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>-->
+                        </div>
+                        <div class="col-xl-4">
+                            <div class="card border-0 h-100">
+                                <div class="card-body p-4">
+                                    <div class="d-flex h-100 align-items-center justify-content-center">
+                                        <div class="text-center">
+                                            <div class="h6 fw-bolder">Contact</div>
+                                            <p class="text-muted mb-4">
+                                                Para cotizar nuestros precios 
+                                                <br />
+                                                <a href="{%url 'contact'%}">Contáctanos</a>
+                                            </p>
+                                            <div class="h6 fw-bolder">Follow us</div>
+                                            <!--<a class="fs-5 px-2 link-dark" href="#!"><i class="bi-twitter"></i></a>-->
+                                            <!--<a class="fs-5 px-2 link-dark" href="#!"><i class="bi-facebook"></i></-a>-->
+                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-linkedin"></i></a>
+                                            <a class="fs-5 px-2 link-dark" href="#!"><i class="bi-youtube"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Blog preview section-->
+            <section class="py-5">
+                <div class="container px-5">
+                    <h2 class="fw-bolder fs-5 mb-4">Parametros a monitorear:</h2>
+                    <div class="row gx-5">
+                        <div class="col-lg-4 mb-5">
+                            <div class="card h-100 shadow border-0">
+                                <img class="card-img-top" src="{% static 'img/camaroneras/1.png'%}" alt="..." />
+                                <div class="card-body p-4">
+                                    <div class="badge bg-primary bg-gradient rounded-pill mb-2">Medición de</div>
+                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Oxígeno</div></a>
+                                    <p class="card-text mb-0">La oxigenación en las piscinas para camaroneras es esencial para mantener un ambiente acuático saludable para los camarones. Los camarones dependen del oxígeno disuelto en el agua para respirar. Medir la oxigenación en tiempo real permite monitorear la cantidad de oxígeno disponible y asegurar niveles óptimos para el crecimiento y la salud de los camarones. La información en tiempo real ayuda a prevenir condiciones de bajo oxígeno, que podrían afectar negativamente la producción.</p>
+                                </div>
+                               
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-5">
+                            <div class="card h-100 shadow border-0">
+                                <img class="card-img-top" src="{% static 'img/camaroneras/2.png'%}" alt="..." />
+                                <div class="card-body p-4">
+                                    <div class="badge bg-primary bg-gradient rounded-pill mb-2">Medición de</div>
+                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">PH</div></a>
+                                    <p class="card-text mb-0">El pH del agua en las piscinas para camaroneras es un indicador crucial de la acidez o alcalinidad del entorno. Los camarones son sensibles a cambios en el pH, y mantener un nivel constante es vital para su bienestar. La medición en tiempo real del pH permite realizar ajustes inmediatos si hay desviaciones, evitando condiciones extremas que podrían afectar negativamente la salud de los camarones y la calidad del agua.</p>
+                                </div>
+                              
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-5">
+                            <div class="card h-100 shadow border-0">
+                                <img class="card-img-top" src="{% static 'img/camaroneras/3.png'%}" alt="..." />
+                                <div class="card-body p-4">
+            
+                                    <a class="text-decoration-none link-dark stretched-link" href="#!"><div class="h5 card-title mb-3">Importancia de la Medición en Tiempo Real y Registro en la Nube:</div></a>
+                                    <p class="card-text mb-0">Detección Rápida de Problemas: La medición en tiempo real permite identificar de inmediato cualquier desviación de los parámetros ideales.  </p>
+                                    <p class="card-text mb-0">Optimización de Condiciones: Al monitorear y ajustar en tiempo real, se puede optimizar la oxigenación y el pH para crear un entorno acuático ideal. </p>
+                                    <p class="card-text mb-0">Almacenamiento en la Nube para Análisis Histórico: Guardar los registros en la nube proporciona un historial detallado de las condiciones del agua a lo largo del tiempo. Esto facilita análisis retrospectivos, tendencias y la identificación de patrones que pueden ser utilizados para mejorar prácticas y eficiencia a largo plazo.</p>
+                                </div>
+                               
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+
+        </main>
+        <!-- Footer-->
+        <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Techdevsa 2024</div></div>
+                    <div class="col-auto">
+                        <a class="link-light small" href="{%url 'mainpage'%}">Privacy</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="{%url 'about'%}">Terms</a>
+                        <span class="text-white mx-1">&middot;</span>
+                        <a class="link-light small" href="{%url 'contact'%}">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{% static 'js/scripts.js' %}"></script>
+    </body>
+</html>
