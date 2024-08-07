@@ -112,14 +112,27 @@ WSGI_APPLICATION = 'smartcatch.wsgi.application'
 #}
 
 
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'Smartcatch',
+#        'USER': 'root',
+#        'PASSWORD': 'Daniel14586solis',
+#        #'PASSWORD': 'Daniel14586solis',
+#        'HOST': '34.135.82.255',
+#        'PORT': 3306,
+#    }
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'Smartcatch',
         'USER': 'root',
-        'PASSWORD': 'Daniel14586solis',
+        'PASSWORD': 'daniel586',
         #'PASSWORD': 'Daniel14586solis',
-        'HOST': '34.135.82.255',
+        'HOST': '192.168.10.254',
         'PORT': 3306,
     }
 }
