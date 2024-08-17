@@ -18,7 +18,6 @@
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>-->
 
 
-
     <style>
         .highcharts-figure .chart-container {
             width: 300px;
@@ -186,13 +185,13 @@
     var clients = {};
     // Conéctate al servidor MQTT y suscríbete a los temas de los sensores
     {% for sensor_url, sensorname in sensor_names %}
-    clients["{{ sensorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+    clients["{{ sensorname }}"] = new Paho.MQTT.Client("192.168.100.77", Number(9001), "");
     clients["{{ sensorname }}"].onMessageArrived = function (message) {
         var newValue = parseFloat(message.payloadString);
         updateChart("{{ sensorname }}", newValue);
         updateHistoricalData("{{ sensorname }}", newValue);
     };
-    // Cambio en la URL de conexión para utilizar wss:// en lugar de ws://
+    
     var mqttOptions = {
         onSuccess: function () {
             console.log("Conexión exitosa al servidor MQTT para {{ sensorname }}");
@@ -204,14 +203,14 @@
     };
 
     // Agregar la propiedad useSSL con el valor true
-    mqttOptions.useSSL = true;
+    mqttOptions.useSSL = false;
 
     clients["{{ sensorname }}"].connect(mqttOptions);
     {% endfor %}
     
     //subscribe actuators
     {% for actuator_url, actuatorname in actuators_names %}
-    clients["{{ actuatorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+    clients["{{ actuatorname }}"] = new Paho.MQTT.Client("192.168.100.77", Number(9001), "");
     clients["{{ actuatorname }}"].onMessageArrived = function (message) {
         var newValue = parseFloat(message.payloadString);
         console.log(newValue);
@@ -256,11 +255,16 @@
     var From1= 0; var To1=60
     var From2= 60; var To2=80
     var From3= 80; var To3=100
+    {% elif sensorname.0 == 'N' %}
+    var maxG = 100;
+    var From1= 0; var To1=40
+    var From2= 40; var To2=75
+    var From3= 75; var To3=100
     {% else %}
     var maxG = 100;
-    var From1= 0; var To1=60
-    var From2= 60; var To2=80
-    var From3= 80; var To3=100
+    var From1= 0; var To1=50
+    var From2= 50; var To2=75
+    var From3= 75; var To3=100
     {% endif %}
     
     Highcharts.chart('{{ sensorname }}_container', {
@@ -361,10 +365,10 @@
                 name: 'Valor',
                 data: [0],
                 tooltip: {
-                    valueSuffix: ''
+                    valueSuffix: '%'
                 },
                 dataLabels: {
-                    format: '{y} ',
+                    format: '{y} %',
                     borderWidth: 0,
                     color: (
                         Highcharts.defaultOptions.title &&
@@ -409,7 +413,7 @@
         },
         yAxis: {
             title: {
-                text: 'Valores'
+                text: 'Values'
             }
         },
         plotOptions: {

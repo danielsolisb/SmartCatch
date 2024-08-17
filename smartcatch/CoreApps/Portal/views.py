@@ -298,5 +298,21 @@ class UserUpdateView(UpdateView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user_name'] = user.username
-        context['subTitle'] = "Profile"
+        context['subTitle'] = "Edit Profile"
+
+        user_stations = Station.objects.filter(user_ID=self.request.user)
+        # filtradas las alarmas relacionadas al usuario logeado
+        user_sensor_alarms = Alarm.objects.filter(sensor__stationID__user_ID=user)
+        #filtramos el tipo de alarmas
+        user_alarms = user_sensor_alarms.filter(alarm_type='alarm')
+        #user_warning = user_sensor_alarms.filter(alarm_type='warning').count()
+        user_warning = user_sensor_alarms.filter(alarm_type='warning')
+        context['title'] = "Profile"
+        context['user_stations']= user_stations
+        context['user_alarms'] = user_alarms
+        context['user_warnings'] = user_warning
+
+
+
+
         return context

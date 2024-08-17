@@ -113,14 +113,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
     <script>
         // JavaScript para la suscripción MQTT y actualización en tiempo real
-        var client = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+        var client = new Paho.MQTT.Client("192.168.100.77", Number(9001), "");
         
         client.onConnectionLost = onConnectionLost;
         client.onMessageArrived = onMessageArrived;
         
         client.connect({
             onSuccess: onConnect,
-            useSSL: true,
+            useSSL: false,
         });
 
         function onConnect() {
