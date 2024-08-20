@@ -185,7 +185,7 @@
     var clients = {};
     // Conéctate al servidor MQTT y suscríbete a los temas de los sensores
     {% for sensor_url, sensorname in sensor_names %}
-    clients["{{ sensorname }}"] = new Paho.MQTT.Client("192.168.100.77", Number(9001), "");
+    clients["{{ sensorname }}"] = new Paho.MQTT.Client("192.168.10.201", Number(9001), "");
     clients["{{ sensorname }}"].onMessageArrived = function (message) {
         var newValue = parseFloat(message.payloadString);
         updateChart("{{ sensorname }}", newValue);
@@ -210,7 +210,7 @@
     
     //subscribe actuators
     {% for actuator_url, actuatorname in actuators_names %}
-    clients["{{ actuatorname }}"] = new Paho.MQTT.Client("192.168.100.77", Number(9001), "");
+    clients["{{ actuatorname }}"] = new Paho.MQTT.Client("192.168.10.201", Number(9001), "");
     clients["{{ actuatorname }}"].onMessageArrived = function (message) {
         var newValue = parseFloat(message.payloadString);
         console.log(newValue);

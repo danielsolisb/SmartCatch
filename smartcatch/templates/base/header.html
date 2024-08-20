@@ -93,8 +93,25 @@
           </ul>-->
         </li>
 
-
-   
+        <li class="nav-item has-treeview menu-close">
+          <a href="#" class="nav-link">
+            <!--<i class="nav-icon fas fa-diagnoses"></i>-->
+            <i class="fa-light fa-file-chart-column"></i>
+            <i class="nav-icon fa fa-cloud"></i>
+            <p>
+              Record
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="{%url 'report'%}" class="nav-link">
+                <i class="far fa-clipboard nav-icon"></i>
+                <p>Reports</p>
+              </a>
+            </li>
+          </ul>
+        </li>   
        
         <li class="nav-item">
           <a href="{%url 'logout'%}" class="nav-link">

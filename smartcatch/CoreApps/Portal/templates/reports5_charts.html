@@ -93,68 +93,63 @@
 
 {% block content %}
     <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
+<section class="content">
+    <div class="container-fluid">
         <div class="row">
-
-          <div class="col-12">
-            <div class="card card-primary">
-              <div class="card-header">
-                <h4 class="card-title">{{ subTitle }}</h4>
-              </div>
-              <div class="card-body">
-                    <div class="btn-group w-100 mb-6">
-                        <form method="post">
-                        
-                          {% csrf_token %}
-                          {{ form|crispy }}
-                        
-                          <button class="btn btn-primary" type="submit">Generate report</button>
-                        </form>
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4 class="card-title">{{ subTitle }}</h4>
                     </div>
-              </div>
+                    <div class="card-body">
+                        <div class="btn-group w-100 mb-6">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <button class="btn btn-primary" type="submit">Generate report</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
 
-          <div class="col-md-12">
-            <div class="card-body">
-                <div class="chart-container" id="combined-chart"></div>
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="chart-container" id="combined-chart"></div>
+                </div>
             </div>
-          </div>
 
-          <div class="col-md-12">
-            {% for sensor, measurements in measurements_by_sensor.items %}
-            <div class="card">
-              <div class="card-header">
-                <h2 class="card-title">{{ sensor.sensorName }}</h2>
-              </div>
-              <div class="card-body">
-                <table class="table table-bordered table-striped" id="data_table">
-                    <thead>
-                        <tr>
-                            <th>Timestamp</th>
-                            <th>Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for measurement in measurements %}
-                            <tr>
-                                <td>{{ measurement.timestamp|date:"Y-m-d H:i:s" }}</td>
-                                <td>{{ measurement.value }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div class="chart-container" id="chart-{{ forloop.counter }}"></div>
-              </div>
-            </div>                        
-            {% endfor %}    
-          </div>  
-
-          
-        
-      </div><!-- /.container-fluid -->
+            <div class="col-md-12">
+                {% for sensor, measurements in measurements_by_sensor.items %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title" id="sensor-title-{{ forloop.counter }}">{{ sensor.sensorName }}</h2>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-bordered table-striped" id="data_table_{{ forloop.counter }}">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for measurement in measurements %}
+                                        <tr>
+                                            <td>{{ measurement.timestamp|date:"Y-m-d H:i:s" }}</td>
+                                            <td>{{ measurement.value }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            <div class="chart-container" id="chart-{{ forloop.counter }}"></div>
+                        </div>
+                    </div>                        
+                {% endfor %}
+            </div>
+        </div><!-- /.container-fluid -->
     </section>
+
     <!-- /.content -->
 {% endblock %}
 
@@ -178,6 +173,9 @@
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
 <script src="{% static 'adminlte-3.1.0/plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+
+
+
 
 <!--<script>
     $(document).ready(function() {
@@ -326,43 +324,85 @@
 
 
 <script>
-    $(document).ready(function() {
-        $('.table').each(function(index) {
-            var table = $(this).DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            });
-
-            // Obtén los datos de la tabla y conviértelos en un arreglo para Highcharts
-            var data = table.rows().data().toArray();
-
-            // Configura opciones para el gráfico
-            var chartOptions = {
-                chart: {
-                    type: 'line'
+  $(document).ready(function() {
+    $('.table').each(function(index) {
+        var tableId = $(this).attr('id');
+        var sensorTitleId = '#sensor-title-' + (index + 1); // ID del título del sensor
+        
+        var table = $(this).DataTable({
+            "responsive": true,
+            "lengthChange": false,
+            "autoWidth": false,
+            "buttons": [
+                {
+                    extend: 'copy',
+                    text: 'Copy',
                 },
-                title: {
-                    text: 'Graphics'
+                {
+                    extend: 'csv',
+                    text: 'CSV',
                 },
-                xAxis: {
-                    categories: data.map(function(row) {
-                        return row[0]; // Suponemos que la primera columna es el eje X (Timestamp)
-                    })
+                {
+                    extend: 'excel',
+                    text: 'Excel',
                 },
-                series: [{
-                    name: 'Value',
-                    data: data.map(function(row) {
-                        return parseFloat(row[1]); // Suponemos que la segunda columna es el valor
-                    })
-                }]
-            };
-
-            // Crea el gráfico en el contenedor correspondiente
-            Highcharts.chart('chart-' + (index + 1), chartOptions);
+                {
+                    extend: 'pdf',
+                    text: 'PDF',
+                    title: function() {
+                        // Obtiene el nombre del sensor desde el HTML
+                        var sensorName = $(sensorTitleId).text(); 
+                        return 'Reporte del Sensor: ' + sensorName;
+                    },
+                    orientation: 'portrait',
+                    pageSize: 'A4'
+                },
+                {
+                    extend: 'print',
+                    text: 'Print',
+                },
+                {
+                    extend: 'colvis',
+                    text: 'Column Visibility',
+                }
+            ]
         });
+
+        // Añade los botones al contenedor de la tabla
+        table.buttons().container()
+            .appendTo('#' + tableId + '_wrapper .col-md-6:eq(0)');
+
+        // Obtén los datos de la tabla y conviértelos en un arreglo para Highcharts
+        var data = table.rows().data().toArray();
+
+        // Configura opciones para el gráfico
+        var chartOptions = {
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Graphics'
+            },
+            xAxis: {
+                categories: data.map(function(row) {
+                    return row[0]; // Suponemos que la primera columna es el eje X (Timestamp)
+                })
+            },
+            series: [{
+                name: 'Value',
+                data: data.map(function(row) {
+                    return parseFloat(row[1]); // Suponemos que la segunda columna es el valor
+                })
+            }]
+        };
+
+        // Crea el gráfico en el contenedor correspondiente
+        Highcharts.chart('chart-' + (index + 1), chartOptions);
     });
+});
+
+
+
 </script>
 
 <!--<script>

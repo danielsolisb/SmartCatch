@@ -1,0 +1,15 @@
+[Unit]
+Description=Mi Aplicación Celery
+After=network.target
+
+[Service]
+ExecStart=/home/dsb586/background/MQTT_Alarms/start_celery.sh
+Restart=always
+User=root
+Group=root
+StandardOutput=file:/home/dsb586/background/MQTT_Alarms/log/celery.log
+StandardError=file:/home/dsb586/background/MQTT_Alarms/log/celery_error.log
+
+[Install]
+WantedBy=multi-user.target
+

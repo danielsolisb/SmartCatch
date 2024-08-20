@@ -166,6 +166,49 @@ class SensorListView(DetailView):
             context['subTitle']= "Active Sensors"
             return context
 
+#
+#class ReportView(FormView):
+#    template_name = 'reports5_charts.html'
+#    form_class = ReportForm
+#    success_url = '/report/'
+#
+#    def get_form_kwargs(self):
+#        kwargs = super().get_form_kwargs()
+#        kwargs['user'] = self.request.user  # Pasa el usuario logeado al formulario
+#        return kwargs
+#
+#    def form_valid(self, form):
+#        station_id = form.cleaned_data['station'].id
+#        start_date = form.cleaned_data['start_date']
+#        end_date = form.cleaned_data['end_date']
+#        print (station_id)
+#        print(start_date)
+#        # Obtener los sensores asociados a la estación seleccionada
+#        sensors = Sensor.objects.filter(stationID=station_id)
+#        # Crear un diccionario para almacenar las mediciones por sensor
+#        measurements_by_sensor = {}
+#        # Obtener las mediciones relacionadas con esos sensores y el rango de fechas
+#        for sensor in sensors:
+#            measurements = Measurements.objects.filter(
+#                sensorID=sensor,
+#                timestamp__gte=start_date,
+#                timestamp__lte=end_date
+#            )
+#            # Almacena las mediciones en el diccionario usando el sensor como clave
+#            measurements_by_sensor[sensor] = measurements
+#        # Puedes pasar 'measurements_by_sensor' a tu plantilla y usar Datatables para mostrar los datos
+#        return self.render_to_response(self.get_context_data(form=form, measurements_by_sensor=measurements_by_sensor))
+#    
+#    def get_context_data(self, **kwargs):      
+#        context = super().get_context_data(**kwargs)
+#        #for i in measurements:
+#        #    print(i.sensorID.sensorName)
+#        context['user_stations'] = Station.objects.filter(user_ID=self.request.user)
+#        context['subTitle']= "Reports"    
+#        user = self.request.user
+#        context['user_name'] = user.username
+#        return context
+
 
 class ReportView(FormView):
     template_name = 'reports5_charts.html'
@@ -178,36 +221,84 @@ class ReportView(FormView):
         return kwargs
 
     def form_valid(self, form):
-        station_id = form.cleaned_data['station'].id
+        sensor = form.cleaned_data['sensor']
         start_date = form.cleaned_data['start_date']
         end_date = form.cleaned_data['end_date']
-        print (station_id)
-        print(start_date)
-        # Obtener los sensores asociados a la estación seleccionada
-        sensors = Sensor.objects.filter(stationID=station_id)
-        # Crear un diccionario para almacenar las mediciones por sensor
-        measurements_by_sensor = {}
-        # Obtener las mediciones relacionadas con esos sensores y el rango de fechas
-        for sensor in sensors:
-            measurements = Measurements.objects.filter(
-                sensorID=sensor,
-                timestamp__gte=start_date,
-                timestamp__lte=end_date
-            )
-            # Almacena las mediciones en el diccionario usando el sensor como clave
-            measurements_by_sensor[sensor] = measurements
-        # Puedes pasar 'measurements_by_sensor' a tu plantilla y usar Datatables para mostrar los datos
+
+        # Obtener las mediciones relacionadas con el sensor seleccionado y el rango de fechas
+        measurements = Measurements.objects.filter(
+            sensorID=sensor,
+            timestamp__gte=start_date,
+            timestamp__lte=end_date
+        )
+
+        # Agrupar las mediciones por sensor
+        measurements_by_sensor = {sensor: measurements}
+
+        # Pasar 'measurements_by_sensor' a la plantilla
         return self.render_to_response(self.get_context_data(form=form, measurements_by_sensor=measurements_by_sensor))
+
     
-    def get_context_data(self, **kwargs):      
+    def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        #for i in measurements:
-        #    print(i.sensorID.sensorName)
         context['user_stations'] = Station.objects.filter(user_ID=self.request.user)
-        context['subTitle']= "Reports"    
-        user = self.request.user
-        context['user_name'] = user.username
+        context['subTitle'] = "Reports"
+        context['user_name'] = self.request.user.username
+        if 'measurements_by_sensor' in kwargs:
+            context['measurements_by_sensor'] = kwargs['measurements_by_sensor']
         return context
+
+
+#class ReportView(FormView):
+#    template_name = 'reports5_charts.html'
+#    form_class = ReportForm
+#    success_url = '/report/'
+#
+#    def get_form_kwargs(self):
+#        kwargs = super().get_form_kwargs()
+#        kwargs['user'] = self.request.user  # Pasa el usuario logeado al formulario
+#        return kwargs
+#
+#    def form_valid(self, form):
+#        station_id = form.cleaned_data['station'].id
+#        sensor_id = form.cleaned_data.get('sensor').id if form.cleaned_data.get('sensor') else None
+#        start_date = form.cleaned_data['start_date']
+#        end_date = form.cleaned_data['end_date']
+#        
+#        print(station_id)
+#        print(sensor_id)
+#        print(start_date)
+#        
+#        # Obtener los sensores asociados a la estación seleccionada
+#        sensors = Sensor.objects.filter(stationID=station_id)
+#        if sensor_id:
+#            sensors = sensors.filter(id=sensor_id)
+#
+#        # Crear un diccionario para almacenar las mediciones por sensor
+#        measurements_by_sensor = {}
+#        
+#        # Obtener las mediciones relacionadas con esos sensores y el rango de fechas
+#        for sensor in sensors:
+#            measurements = Measurements.objects.filter(
+#                sensorID=sensor,
+#                timestamp__gte=start_date,
+#                timestamp__lte=end_date
+#            )
+#            # Almacena las mediciones en el diccionario usando el sensor como clave
+#            measurements_by_sensor[sensor] = measurements
+#        
+#        # Puedes pasar 'measurements_by_sensor' a tu plantilla y usar Datatables para mostrar los datos
+#        return self.render_to_response(self.get_context_data(form=form, measurements_by_sensor=measurements_by_sensor))
+#    
+#    def get_context_data(self, **kwargs):      
+#        context = super().get_context_data(**kwargs)
+#        context['user_stations'] = Station.objects.filter(user_ID=self.request.user)
+#        context['subTitle'] = "Reports"
+#        user = self.request.user
+#        context['user_name'] = user.username
+#        return context
+#
+
 
 
 class AlarmListView(LoginRequiredMixin, ListView):
