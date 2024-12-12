@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
+from django.shortcuts import redirect
 #from CoreApps.MainPage.views import index
 from CoreApps.MainPage import views
 from CoreApps.MainPage.views import main, about, agroIoT, avicolaIoT, industrial, demoRequest, acuicultura
@@ -11,7 +12,8 @@ from CoreApps.MainPage import views
 
 urlpatterns = [
     #path("", views.index, name="index"),
-    path("", main.as_view(), name='mainpage'),
+    #path("", main.as_view(), name='mainpage'),
+    path("", lambda request: redirect('login')),
     path("about", about.as_view(), name='about'),
     path("contact", views.contact, name='contact'),
     path("demoRequest", views.demoRequest, name='Demo'),
