@@ -15,9 +15,15 @@
     <script src="{% static 'Highcharts-11.1.0/code/modules/accessibility.js'%}"></script>
     <script src="{% static 'Highcharts-11.1.0/code/modules/series-label.js'%}"></script>
 
+    <script src="{% static 'Highcharts-11.1.0/code/modules/bullet.js'%}"></script>
+
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>-->
 
-
+    <!-- Highcharts Core -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <!-- Highcharts Modules -->
+    <script src="https://code.highcharts.com/modules/bullet.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
     <style>
         .highcharts-figure .chart-container {
@@ -927,6 +933,7 @@
     <!-- /.content -->
 {% endblock %}
 
+
 {% block javascript %}
 <script type="text/javascript">
 var clients = {};    
@@ -949,85 +956,11 @@ var mqttOptions = {
         console.log("Error en la conexión MQTT para {{ sensorname }}: " + message.errorMessage);
     }
 };
-mqttOptions.useSSL = false;
+mqttOptions.useSSL = true;
 clients["{{ sensorname }}"].connect(mqttOptions);
 {% endfor %}
 
-{% for actuator_url, actuatorname in actuators_names %}
-clients["{{ actuatorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
-clients["{{ actuatorname }}"].onMessageArrived = function (message) {
-    var newValue = parseFloat(message.payloadString);
-    console.log(newValue);
-    updateActuatorsText(newValue);
-};
-var mqttOptions = {
-    onSuccess: function () {
-        console.log("Actuators Conexión exitosa al servidor MQTT para {{ actuatorname }}");
-        clients["{{ actuatorname }}"].subscribe("{{ actuator_url }}");
-        const lastMeasurement = {% if last_measurements %} "{{ last_measurements.0.2 }}" {% else %} 0 {% endif %};
-        document.getElementById("MeasurementActu").textContent = lastMeasurement;
-    },
-    onFailure: function (message) {
-        console.log("Error en la conexión MQTT para {{ actuatorname }}: " + message.errorMessage);
-    }
-};
-mqttOptions.useSSL = false;
-clients["{{ actuatorname }}"].connect(mqttOptions);
-{% endfor %}
-
-function increaseValue() {
-        const measurementText = document.getElementById("MeasurementActu");
-        let value = parseInt(measurementText.textContent, 10) + 5;
-
-        if (value <= 100) {
-          measurementText.textContent = value;
-        
-        {% for actuator_url, actuatorname in actuators_names %}
-        var actuatorClient = "{{actuatorname}}";
-        console.log(actuatorClient) // Obtener el valor de data-actuator-name
-        var actuatorUrl = "{{actuator_url}}";
-        console.log(actuatorUrl);
-        {% endfor %}
-                if (clients[actuatorClient]) {
-                    var message = new Paho.MQTT.Message(value.toString());
-                    message.destinationName = actuatorUrl;
-                    console.log(message)
-                    clients[actuatorClient].send(message);
-                } else {
-                    console.log("No se pudo encontrar el cliente MQTT para");
-                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
-                }
-        }
-    };   
-
-    function decreaseValue() {
-        const measurementText = document.getElementById("MeasurementActu");
-        let value = parseInt(measurementText.textContent, 10) - 10;
-
-        if (value >= 0) {
-          measurementText.textContent = value;
-        
-        {% for actuator_url, actuatorname in actuators_names %}
-        var actuatorClient = "{{actuatorname}}";
-        console.log(actuatorClient) // Obtener el valor de data-actuator-name
-        var actuatorUrl = "{{actuator_url}}";
-        console.log(actuatorUrl);
-        {% endfor %}
-                if (clients[actuatorClient]) {
-                    var message = new Paho.MQTT.Message(value.toString());
-                    message.destinationName = actuatorUrl;
-                    console.log(message)
-                    clients[actuatorClient].send(message);
-                } else {
-                    console.log("No se pudo encontrar el cliente MQTT para");
-                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
-                }
-        }
-    };
-
-
-    // Configura la suscripción y actualización para sensor_with_f
-    // Configura la suscripción y actualización para sensor_with_f
+// Configura la suscripción y actualización para sensor_with_f
 {% for sensor_url in sensors_with_f %}
 var sensornew = "{{sensors_with_f}}"
 var sensorWithFClient = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");

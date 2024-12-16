@@ -100,7 +100,7 @@ class SensorListView(DetailView):
         user_category = user.categorie
         # Determinamos la plantilla según la categoría
         if user_category == 'industrial':
-            return ["sensor_list5_indu_5.html"]
+            return ["sensor_list5_indu_7.html"]
         elif user_category == 'agricola':
             return ["sensor_list5_agro_4.html"]
         elif user_category == 'avicola':

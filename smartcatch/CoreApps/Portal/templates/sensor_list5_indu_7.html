@@ -14,6 +14,7 @@
     <script src="{% static 'Highcharts-11.1.0/code/modules/export-data.js'%}"></script>
     <script src="{% static 'Highcharts-11.1.0/code/modules/accessibility.js'%}"></script>
     <script src="{% static 'Highcharts-11.1.0/code/modules/series-label.js'%}"></script>
+    <script src="{% static 'Highcharts-11.1.0/code/modules/bullet.js'%}"></script>
 
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>-->
 
@@ -99,18 +100,18 @@
           </div>
         </div>
         <div class="row">                
-            <!--graficos--> 
-
-                <div class="card col-lg-4">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                          <i class="fas fa-cog"></i>
-                          Flow Sensor
-                        </h3>
-                      </div>
-                    <div class="small-box bg-white" style="text-align:center;">
-                    
-                    <svg
+    <!-- Flow Sensor -->
+    <div class="card col-lg-4">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-cog"></i>
+                Flow Sensor
+            </h3>
+        </div>
+        <div class="small-box bg-white" style="text-align:center;">
+            <!-- Aquí va el SVG del Flow Sensor -->
+            
+            <svg
                        version="1.1"
                        width="170"
                        height="250"
@@ -892,32 +893,32 @@
                            style="font-weight:bold;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#008000"
                            id="tspan1744">000000</tspan></tspan></text></svg>
 
-
-
-
-                    </div>
-                </div>
-
-                {% for sensor_url, sensorname in sensor_names %}
-                <div class="card col-lg-4">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                          <i class="fas fa-cog"></i>
-                          Pressure
-                        </h3>
-                      </div>
-
-                    <div class="small-box bg-white">
-                        <figure class="highcharts-figure">
-                            <div id="{{ sensorname }}_container"></div>
-                        </figure>
-                    </div>
-                </div>
-                {% endfor %}          
-                <!--/.graficos-->
-                
-                
+            
         </div>
+    </div>
+
+    <!-- Contenedor de gráficos Pressure -->
+    <div class="col-lg-8">
+        <div class="row">
+            {% for sensor_url, sensorname in sensor_names %}
+            <div class="card col-12 mb-3"> <!-- Gráficos uno encima del otro -->
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-cog"></i>
+                        Pressure
+                    </h3>
+                </div>
+                <div class="small-box bg-white">
+                    <figure class="highcharts-figure">
+                        <div id="{{ sensorname }}_container"></div>
+                    </figure>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
         <div class="row">
                 <div class="col-lg-6" id="historical_data_container"></div>
                 <div class="col-lg-6" id="historical_data_container_flow"></div>
@@ -926,6 +927,7 @@
     </section>
     <!-- /.content -->
 {% endblock %}
+
 
 {% block javascript %}
 <script type="text/javascript">
@@ -949,85 +951,11 @@ var mqttOptions = {
         console.log("Error en la conexión MQTT para {{ sensorname }}: " + message.errorMessage);
     }
 };
-mqttOptions.useSSL = false;
+mqttOptions.useSSL = true;
 clients["{{ sensorname }}"].connect(mqttOptions);
 {% endfor %}
 
-{% for actuator_url, actuatorname in actuators_names %}
-clients["{{ actuatorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
-clients["{{ actuatorname }}"].onMessageArrived = function (message) {
-    var newValue = parseFloat(message.payloadString);
-    console.log(newValue);
-    updateActuatorsText(newValue);
-};
-var mqttOptions = {
-    onSuccess: function () {
-        console.log("Actuators Conexión exitosa al servidor MQTT para {{ actuatorname }}");
-        clients["{{ actuatorname }}"].subscribe("{{ actuator_url }}");
-        const lastMeasurement = {% if last_measurements %} "{{ last_measurements.0.2 }}" {% else %} 0 {% endif %};
-        document.getElementById("MeasurementActu").textContent = lastMeasurement;
-    },
-    onFailure: function (message) {
-        console.log("Error en la conexión MQTT para {{ actuatorname }}: " + message.errorMessage);
-    }
-};
-mqttOptions.useSSL = false;
-clients["{{ actuatorname }}"].connect(mqttOptions);
-{% endfor %}
-
-function increaseValue() {
-        const measurementText = document.getElementById("MeasurementActu");
-        let value = parseInt(measurementText.textContent, 10) + 5;
-
-        if (value <= 100) {
-          measurementText.textContent = value;
-        
-        {% for actuator_url, actuatorname in actuators_names %}
-        var actuatorClient = "{{actuatorname}}";
-        console.log(actuatorClient) // Obtener el valor de data-actuator-name
-        var actuatorUrl = "{{actuator_url}}";
-        console.log(actuatorUrl);
-        {% endfor %}
-                if (clients[actuatorClient]) {
-                    var message = new Paho.MQTT.Message(value.toString());
-                    message.destinationName = actuatorUrl;
-                    console.log(message)
-                    clients[actuatorClient].send(message);
-                } else {
-                    console.log("No se pudo encontrar el cliente MQTT para");
-                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
-                }
-        }
-    };   
-
-    function decreaseValue() {
-        const measurementText = document.getElementById("MeasurementActu");
-        let value = parseInt(measurementText.textContent, 10) - 10;
-
-        if (value >= 0) {
-          measurementText.textContent = value;
-        
-        {% for actuator_url, actuatorname in actuators_names %}
-        var actuatorClient = "{{actuatorname}}";
-        console.log(actuatorClient) // Obtener el valor de data-actuator-name
-        var actuatorUrl = "{{actuator_url}}";
-        console.log(actuatorUrl);
-        {% endfor %}
-                if (clients[actuatorClient]) {
-                    var message = new Paho.MQTT.Message(value.toString());
-                    message.destinationName = actuatorUrl;
-                    console.log(message)
-                    clients[actuatorClient].send(message);
-                } else {
-                    console.log("No se pudo encontrar el cliente MQTT para");
-                    // Aquí puedes manejar el caso en que el cliente MQTT no está definido
-                }
-        }
-    };
-
-
-    // Configura la suscripción y actualización para sensor_with_f
-    // Configura la suscripción y actualización para sensor_with_f
+// Configura la suscripción y actualización para sensor_with_f
 {% for sensor_url in sensors_with_f %}
 var sensornew = "{{sensors_with_f}}"
 var sensorWithFClient = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
@@ -1080,97 +1008,88 @@ function updateActuatorsText(newValue) {
 // Configura los gráficos para cada sensor
 {% for sensor_url, sensorname in sensor_names %}
 Highcharts.chart('{{ sensorname }}_container', {
-
     chart: {
-        type: 'gauge',
-        alignTicks: false,
-        plotBackgroundColor: null,
-        plotBackgroundImage: null,
-        plotBorderWidth: 0,
-        plotShadow: false,
-        height: 300 // Aumenta la altura del gauge
+        inverted: true,
+        marginLeft: 50,   // Margen izquierdo más pequeño
+        marginRight: 20,  // Margen derecho ajustado
+        height: 120,      // Altura ajustada
+        type: 'bullet',
+        events: {
+            load: function () {
+                var chart = this;
+                chart.customText = chart.renderer.text(
+                    '0 PSI', 
+                    chart.chartWidth / 2 - 20, 
+                    chart.chartHeight + 15
+                ).css({
+                    color: '#000',
+                    fontSize: '12px',
+                    fontWeight: 'bold'
+                }).add();
+            }
+        }
     },
-
     title: {
         text: '{{ sensorname }}',
         style: {
-            fontSize: '18px' // Aumenta el tamaño del título
+            fontSize: '14px'
         }
     },
-
-    pane: {
-        startAngle: -150,
-        endAngle: 150,
-        size: '105%' // Ajusta el tamaño del gauge
+    legend: {
+        enabled: false
     },
-
-    yAxis: [{
-        min: 0,
-        max: 300, // PSI máximo
-        lineColor: '#339',
-        tickColor: '#339',
-        minorTickColor: '#339',
-        offset: -25,
-        lineWidth: 2,
-        labels: {
-            distance: -20,
-            rotation: 'auto'
-        },
-        tickLength: 5,
-        minorTickLength: 5,
-        endOnTick: false
-    }, {
-        min: 0,
-        max: 20.68, // Conversión máxima de 300 PSI a bar
-        tickPosition: 'outside',
-        lineColor: '#933',
-        lineWidth: 2,
-        minorTickPosition: 'outside',
-        tickColor: '#933',
-        minorTickColor: '#933',
-        tickLength: 5,
-        minorTickLength: 5,
-        labels: {
-            distance: 12,
-            rotation: 'auto'
-        },
-        offset: -20,
-        endOnTick: false
-    }],
-
+    xAxis: {
+        categories: ['{{ sensorname }}']
+    },
+    yAxis: {
+        plotBands: [
+            { from: 0, to: 150, color: 'rgba(0, 255, 0, 0.4)' },    // Verde opaco
+            { from: 150, to: 225, color: 'rgba(255, 255, 0, 0.4)' }, // Amarillo opaco
+            { from: 225, to: 300, color: 'rgba(255, 0, 0, 0.4)' }    // Rojo opaco
+        ],
+        title: null,
+        max: 300
+    },
     series: [{
-        name: 'Pressure',
-        data: [0], // Valor inicial
-        dataLabels: {
-            style: {
-                fontSize: '14px' // Aumenta el tamaño de los datos
-            },
-            formatter: function () {
-                var psi = this.y;
-                var bar = (psi * 0.0689476).toFixed(2); // Conversión de PSI a bar
-                return '<span style="color:#339">' + psi + ' PSI</span><br/>' +
-                       '<span style="color:#933">' + bar + ' bar</span>';
-            },
-            backgroundColor: {
-                linearGradient: {
-                    x1: 0,
-                    y1: 0,
-                    x2: 0,
-                    y2: 1
-                },
-                stops: [
-                    [0, '#DDD'],
-                    [1, '#FFF']
-                ]
+        data: [{ y: 0, target: 250 }],
+        pointWidth: 25 // Aumenta el grosor de la barra horizontal
+    }],
+    plotOptions: {
+        series: {
+            pointPadding: 0.1,
+            borderWidth: 0,
+            targetOptions: {
+                width: '300%' // Ajusta el ancho del marcador target
             }
-        },
-        tooltip: {
-            valueSuffix: ' PSI'
         }
-    }]
-
+    },
+    tooltip: {
+        pointFormat: '<b>{point.y}</b> PSI (Target: {point.target})'
+    }
 });
+
+// Actualización de valores con MQTT
+clients["{{ sensorname }}"].onMessageArrived = function (message) {
+    var newValue = parseFloat(message.payloadString);
+
+    // Encontrar el gráfico y actualizar el valor dinámicamente
+    var chart = Highcharts.charts.find(chart => chart.renderTo.id === '{{ sensorname }}_container');
+    if (chart) {
+        var point = chart.series[0].points[0];
+        point.update({ y: newValue });
+
+        // Actualizar el texto dinámico con el valor y unidades PSI
+        chart.customText.attr({
+            text: newValue.toFixed(2) + ' PSI'
+        });
+    }
+
+    // Actualización de datos históricos
+    updateHistoricalData("{{ sensorname }}", newValue);
+};
 {% endfor %}
+
+
 
 Highcharts.chart('historical_data_container', {
     chart: {
