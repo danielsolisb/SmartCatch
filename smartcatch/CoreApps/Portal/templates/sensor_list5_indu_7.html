@@ -21,69 +21,38 @@
 
 
     <style>
+    .highcharts-figure .chart-container {
+        width: 100%; /* Ocupa todo el ancho disponible */
+        height: 200px; /* Mantén la altura definida */
+        float: none;   /* Elimina el float */
+        margin: 0;     /* Elimina márgenes */
+    }
+    
+    .highcharts-figure {
+        width: 100%; /* Asegura que el contenedor principal ocupe todo el ancho */
+        margin: 0;   /* Elimina margen */
+        padding: 0;  /* Elimina padding */
+    }
+
+    /* Elimina el ancho fijo del data table */
+    .highcharts-data-table table {
+        font-family: Verdana, sans-serif;
+        border-collapse: collapse;
+        border: 1px solid #ebebeb;
+        margin: 10px auto;
+        text-align: center;
+        width: 100%; /* Ajusta el ancho al 100% del contenedor */
+        max-width: none; /* Elimina el máximo ancho */
+    }
+
+    /* Responsividad adicional */
+    @media (max-width: 768px) {
         .highcharts-figure .chart-container {
-            width: 300px;
-            height: 200px;
-            float: left;
+            height: 150px; /* Altura más pequeña en dispositivos pequeños */
         }
-        
-        .highcharts-figure,
-        .highcharts-data-table table {
-            /*Aqui es la anchura de los gauges*/
-            width: 300px;
-            margin: 0 auto;
-        }
-        
-        .highcharts-data-table table {
-            font-family: Verdana, sans-serif;
-            border-collapse: collapse;
-            border: 1px solid #ebebeb;
-            margin: 10px auto;
-            text-align: center;
-            width: 100%;
-            max-width: 350px;
-        }
-        
-        .highcharts-data-table caption {
-            padding: 1em 0;
-            font-size: 1.2em;
-            color: #555;
-        }
-        
-        .highcharts-data-table th {
-            font-weight: 600;
-            padding: 0.5em;
-        }
-        
-        .highcharts-data-table td,
-        .highcharts-data-table th,
-        .highcharts-data-table caption {
-            padding: 0.5em;
-        }
-        
-        .highcharts-data-table thead tr,
-        .highcharts-data-table tr:nth-child(even) {
-            background: #f8f8f8;
-        }
-        
-        .highcharts-data-table tr:hover {
-            background: #f1f7ff;
-        }
-        
-        @media (max-width: 200px) {
-            .highcharts-figure,
-            .highcharts-data-table table {
-                width: 100%;
-            }
-        
-            .highcharts-figure .chart-container {
-                width: 400px;
-                float: none;
-                margin: 0 auto;
-            }
-        }
-        
-    </style>
+    }
+</style>
+
 {% endblock %}
 
 {% block content %}
@@ -1010,7 +979,7 @@ function updateActuatorsText(newValue) {
 Highcharts.chart('{{ sensorname }}_container', {
     chart: {
         inverted: true,
-        marginLeft: 50,   // Margen izquierdo más pequeño
+        marginLeft: 100,   // Margen izquierdo más pequeño
         marginRight: 20,  // Margen derecho ajustado
         height: 120,      // Altura ajustada
         type: 'bullet',
@@ -1052,7 +1021,8 @@ Highcharts.chart('{{ sensorname }}_container', {
     },
     series: [{
         data: [{ y: 0, target: 250 }],
-        pointWidth: 25 // Aumenta el grosor de la barra horizontal
+        pointWidth: 25, // Aumenta el grosor de la barra horizontal
+        color: 'rgba(35, 41, 39, 0.8)' // Naranja llamativo
     }],
     plotOptions: {
         series: {
