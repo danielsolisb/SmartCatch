@@ -849,18 +849,21 @@
                        id="rect1417"
                        transform="translate(-2.952247)" />
                     	</g>
+                        <text
+                                xml:space="preserve"
+                                style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.09914px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#008000;stroke-width:0.227226"
+                                x="15.865234"
+                                y="20.681865"
+                                id="flow"
+                                transform="scale(0.8991538,1.1121568)"
+                                inkscape:label="#flow"><tspan
+                                  sodipodi:role="line"
+                                  id="tspan642"
+                                  style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:15.09914px;font-family:Arial;-inkscape-font-specification:'Arial, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#008000;stroke-width:0.227226"
+                                  x="15.496851"
+                                  y="20.214348">000000</tspan></text>
                     </g>
-                    <text
-                       xml:space="preserve"
-                       transform="matrix(1.7578125,0,0,1.7578125,-50.110156,0)"
-                       id="flow"
-                       style="font-style:normal;font-weight:normal;font-size:29.3333px;line-height:1.25;font-family:sans-serif;white-space:pre;shape-inside:url(#rect1561);fill:#000000;fill-opacity:1;stroke:none"
-                       inkscape:label="#flow"><tspan
-                         x="39.865234"
-                         y="56.681865"
-                         id="tspan1746"><tspan
-                           style="font-weight:bold;font-family:Arial;-inkscape-font-specification:'Arial Bold';fill:#008000"
-                           id="tspan1744">000000</tspan></tspan></text></svg>
+                    </svg>
 
             
         </div>
@@ -904,7 +907,7 @@ var clients = {};
 
 // Conéctate al servidor MQTT y suscríbete a los temas de los sensores
 {% for sensor_url, sensorname in sensor_names %}
-clients["{{ sensorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+clients["{{ sensorname }}"] = new Paho.MQTT.Client("34.68.111.125", Number(9001), "");
 clients["{{ sensorname }}"].onMessageArrived = function (message) {
     var newValue = parseFloat(message.payloadString);
     updateChart("{{ sensorname }}", newValue);
@@ -920,14 +923,14 @@ var mqttOptions = {
         console.log("Error en la conexión MQTT para {{ sensorname }}: " + message.errorMessage);
     }
 };
-mqttOptions.useSSL = true;
+mqttOptions.useSSL = false;
 clients["{{ sensorname }}"].connect(mqttOptions);
 {% endfor %}
 
 // Configura la suscripción y actualización para sensor_with_f
 {% for sensor_url in sensors_with_f %}
 var sensornew = "{{sensors_with_f}}"
-var sensorWithFClient = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
+var sensorWithFClient = new Paho.MQTT.Client("34.68.111.125", Number(9001), "");
 sensorWithFClient.onMessageArrived = function (message) {
     var newValue = parseFloat(message.payloadString);
     console.log(newValue);
@@ -936,7 +939,7 @@ sensorWithFClient.onMessageArrived = function (message) {
 };
 
 var mqttOptions2 = {
-    useSSL: true,
+    useSSL: false,
     onSuccess: function () {
         console.log("Conexión exitosa al servidor MQTT para sensor_with_f");
         // Suscríbete a los temas en sensors_with_f
