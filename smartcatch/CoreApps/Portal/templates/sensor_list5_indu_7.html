@@ -907,7 +907,7 @@ var clients = {};
 
 // Conéctate al servidor MQTT y suscríbete a los temas de los sensores
 {% for sensor_url, sensorname in sensor_names %}
-clients["{{ sensorname }}"] = new Paho.MQTT.Client("34.68.111.125", Number(9001), "");
+clients["{{ sensorname }}"] = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
 clients["{{ sensorname }}"].onMessageArrived = function (message) {
     var newValue = parseFloat(message.payloadString);
     updateChart("{{ sensorname }}", newValue);
@@ -923,14 +923,14 @@ var mqttOptions = {
         console.log("Error en la conexión MQTT para {{ sensorname }}: " + message.errorMessage);
     }
 };
-mqttOptions.useSSL = false;
+mqttOptions.useSSL = true;
 clients["{{ sensorname }}"].connect(mqttOptions);
 {% endfor %}
 
 // Configura la suscripción y actualización para sensor_with_f
 {% for sensor_url in sensors_with_f %}
 var sensornew = "{{sensors_with_f}}"
-var sensorWithFClient = new Paho.MQTT.Client("34.68.111.125", Number(9001), "");
+var sensorWithFClient = new Paho.MQTT.Client("techdevsa.com", Number(8081), "");
 sensorWithFClient.onMessageArrived = function (message) {
     var newValue = parseFloat(message.payloadString);
     console.log(newValue);
@@ -939,7 +939,7 @@ sensorWithFClient.onMessageArrived = function (message) {
 };
 
 var mqttOptions2 = {
-    useSSL: false,
+    useSSL: true,
     onSuccess: function () {
         console.log("Conexión exitosa al servidor MQTT para sensor_with_f");
         // Suscríbete a los temas en sensors_with_f
